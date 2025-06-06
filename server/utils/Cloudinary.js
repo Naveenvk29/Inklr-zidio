@@ -59,6 +59,9 @@ const uploadBlogImage = async (file) => {
         .parse(file.originalname)
         .name.replace(/\s+/g, "-")}`,
     });
+    fs.unlinkSync(file.path);
+
+    return result;
   } catch (error) {
     fs.unlinkSync(file.path);
     console.error("Error uploading Blog Image:", error);
@@ -66,7 +69,7 @@ const uploadBlogImage = async (file) => {
   }
 };
 
-const deleteBlogImage = async () => {
+const deleteBlogImage = async (public_id) => {
   try {
     const result = await cloudinary.uploader.destroy(public_id, {
       invalidate: true,

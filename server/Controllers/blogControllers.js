@@ -1,0 +1,196 @@
+import Blog from "../Models/blogModel.js";
+import { uploadBlogImage, deleteBlogImage } from "../utils/Cloudinary.js";
+
+const createABlog = async (req, res) => {
+  try {
+    const { title, content, category, visibility, description } = req.body;
+    const tags = req.body.tags?.split(",").map((t) => t.trim()) || [];
+    const author = req.user.id;
+    let blogImage = {};
+
+    if (req.file) {
+      const result = await uploadBlogImage(req.file);
+      blogImage = result;
+    }
+
+    const blog = new Blog({
+      author,
+      title,
+      description,
+      tags,
+      category,
+      content,
+      visibility,
+      blogImage,
+    });
+
+    await blog.save();
+
+    res.status(201).json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const FetchAllBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find()
+      .populate("author")
+      .populate("category")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const fetchBlogById = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id)
+      .populate("author")
+      .populate("category  name");
+
+    res.status(200).json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const FetchMyBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ author: req.user.id })
+      .populate("category")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const fetchSpecificUserblogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({
+      author: req.params.id,
+      visibility: "everyone",
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const modifyblog = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+
+    if (blog.author._id.toString() !== req.user.id.toString()) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    if (req.file) {
+      if (blog.blogImage && blog.blogImage.public_id) {
+        await deleteBlogImage(blog.blogImage.public_id);
+      }
+      const result = await uploadBlogImage(req.file);
+      blog.postImage = result;
+    }
+
+    Object.assign(blog, req.body);
+
+    await blog.save();
+
+    res.status(200).json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const removeblog = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+
+    if (blog.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    if (blog.blogImage && blog.blogImage.public_id) {
+      await deleteBlogImage(blog.blogImage.public_id);
+    }
+    await blog.deleteOne();
+
+    res.status(200).json({ message: "Blog deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const togglelike = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id).populate(
+      "likes",
+      "userName email avatar"
+    );
+
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    const userId = req.user.id.toString();
+    const liked = blog.likes.some((user) => user._id.toString() === userId);
+
+    if (liked) {
+      blog.likes.pull(userId);
+    } else {
+      blog.likes.push(userId);
+    }
+
+    await blog.save();
+    await blog.populate("likes", "username email profilePicture");
+
+    res.status(200).json({
+      message: liked ? "Unliked" : "Liked",
+      likesCount: blog.likes.length,
+      likedBy: blog.likes,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+const fetchBlogLikes = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id).populate(
+      "likes",
+      "userName email avatar"
+    );
+
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    res.status(200).json({
+      likesCount: blog.likes.length,
+      likedBy: blog.likes,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
+export {
+  createABlog,
+  FetchMyBlogs,
+  FetchAllBlogs,
+  fetchBlogById,
+  fetchSpecificUserblogs,
+  modifyblog,
+  removeblog,
+  togglelike,
+  fetchBlogLikes,
+};

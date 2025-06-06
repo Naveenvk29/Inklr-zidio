@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 
 import userRoutes from "./Routes/userRoutes.js";
 import categoryRoutes from "./Routes/catergoryRoutes.js";
+import blogRoutes from "./Routes/blogRoutes.js";
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/blogs", blogRoutes);
 
 export { app };

@@ -40,8 +40,8 @@ const blogSchema = new mongoose.Schema(
     },
     visibility: {
       type: String,
-      enum: ["viewMe", "everyOne"],
-      default: "everyOne",
+      enum: ["me", "everyone"],
+      default: "everyone",
     },
     views: {
       type: Number,

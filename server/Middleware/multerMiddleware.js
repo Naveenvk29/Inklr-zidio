@@ -17,7 +17,7 @@ const filterImageFile = (req, file, cb) => {
   if (allowedtypes.includes(ext)) {
     cb(null, true);
   } else {
-    cd(new Error("Only image files are allowed!"));
+    cb(new Error("Only image files are allowed!"));
   }
 };
 
