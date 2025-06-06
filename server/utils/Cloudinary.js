@@ -50,4 +50,36 @@ const deleteUserAvatar = async (public_id) => {
   }
 };
 
-export { uploadUserAvatar, deleteUserAvatar };
+const uploadBlogImage = async (file) => {
+  try {
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: "Inklr/Blog-image",
+      resource_type: "auto",
+      public_id: `${Date.now()}-${path
+        .parse(file.originalname)
+        .name.replace(/\s+/g, "-")}`,
+    });
+  } catch (error) {
+    fs.unlinkSync(file.path);
+    console.error("Error uploading Blog Image:", error);
+    throw error;
+  }
+};
+
+const deleteBlogImage = async () => {
+  try {
+    const result = await cloudinary.uploader.destroy(public_id, {
+      invalidate: true,
+    });
+    if (result.result !== "ok") {
+      throw new Error(`Cloudinary delete failed: ${result.result}`);
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Cloudinary deletion error:", error.message);
+    throw new Error("Failed to delete image.");
+  }
+};
+
+export { uploadUserAvatar, deleteUserAvatar, uploadBlogImage, deleteBlogImage };
