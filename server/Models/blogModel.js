@@ -45,6 +45,7 @@ const blogSchema = new mongoose.Schema(
     },
     views: {
       type: Number,
+
       default: 0,
     },
   },

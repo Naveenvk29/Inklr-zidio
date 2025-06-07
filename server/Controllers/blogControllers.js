@@ -1,6 +1,5 @@
 import Blog from "../Models/blogModel.js";
 import { uploadBlogImage, deleteBlogImage } from "../utils/Cloudinary.js";
-
 const createABlog = async (req, res) => {
   try {
     const { title, content, category, visibility, description } = req.body;
@@ -35,8 +34,8 @@ const createABlog = async (req, res) => {
 const FetchAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find()
-      .populate("author")
-      .populate("category")
+      .populate("author", "userName avatar")
+      .populate("category", "name")
       .sort({ createdAt: -1 });
 
     res.status(200).json(blogs);
@@ -48,8 +47,8 @@ const FetchAllBlogs = async (req, res) => {
 const fetchBlogById = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id)
-      .populate("author")
-      .populate("category  name");
+      .populate("author", "userName avatar")
+      .populate("category", "name");
 
     res.status(200).json(blog);
   } catch (error) {
@@ -60,7 +59,7 @@ const fetchBlogById = async (req, res) => {
 const FetchMyBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find({ author: req.user.id })
-      .populate("category")
+      .populate("category", "name")
       .sort({ createdAt: -1 });
 
     res.status(200).json(blogs);
@@ -74,7 +73,9 @@ const fetchSpecificUserblogs = async (req, res) => {
     const blogs = await Blog.find({
       author: req.params.id,
       visibility: "everyone",
-    }).sort({ createdAt: -1 });
+    })
+      .populate("category", "name")
+      .sort({ createdAt: -1 });
 
     res.status(200).json(blogs);
   } catch (error) {
@@ -153,7 +154,7 @@ const togglelike = async (req, res) => {
     }
 
     await blog.save();
-    await blog.populate("likes", "username email profilePicture");
+    await blog.populate("likes", "username email avatar");
 
     res.status(200).json({
       message: liked ? "Unliked" : "Liked",
