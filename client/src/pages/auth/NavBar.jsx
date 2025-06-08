@@ -58,7 +58,7 @@ const NavBar = () => {
   );
 
   return (
-    <div className="fixed inset-x-0 top-2 z-[100] w-full bg-transparent">
+    <div className="sticky inset-x-0 top-2 z-[100] w-full bg-transparent">
       <div className="mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-2">
         <Link
           to="/"
@@ -84,7 +84,7 @@ const NavBar = () => {
                   key={user._id}
                   className="cursor-pointer px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-neutral-600"
                   onClick={() => {
-                    navigate(`/profile/${user._id}`);
+                    navigate(`/user-profile/${user._id}`);
                     setSearchTerm("");
                   }}
                 >
