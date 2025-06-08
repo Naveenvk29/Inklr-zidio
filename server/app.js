@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import userRoutes from "./Routes/userRoutes.js";
 import categoryRoutes from "./Routes/catergoryRoutes.js";
@@ -7,6 +8,13 @@ import blogRoutes from "./Routes/blogRoutes.js";
 import commentRoutes from "./Routes/commentRoutes.js";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,6 +27,6 @@ app.get("/", (req, res) => {
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/blogs", blogRoutes);
-app.use("/api/v1/comments", blogRoutes);
+app.use("/api/v1/comments", commentRoutes);
 
 export { app };

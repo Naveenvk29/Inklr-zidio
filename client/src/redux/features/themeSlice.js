@@ -17,7 +17,7 @@ const themeSlice = createSlice({
     initializeTheme: (state) => {
       const storedTheme = localStorage.getItem("theme");
       const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
+        "(prefers-color-scheme: dark)",
       ).matches;
       const isDark = storedTheme === "dark" || (!storedTheme && prefersDark);
       state.darkMode = isDark;

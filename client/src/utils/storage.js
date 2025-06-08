@@ -13,7 +13,7 @@ const saveUserInStorage = (user, rememberMe) => {
 
 const getUserFromStorage = () => {
   const user = localStorage.getItem(USER_KEY);
-  const expire = localStorage.get(EXPIRY_KEY);
+  const expire = localStorage.getItem(EXPIRY_KEY);
 
   if (expire && Date.now() > parseInt(expire)) {
     clearUserFromStorage();
