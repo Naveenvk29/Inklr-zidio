@@ -10,7 +10,7 @@ const MyProfile = () => {
   } = useGetCurrentProfileQuery();
 
   const {
-    data: Blogs,
+    data: blogs,
     isLoading: loadingBlogs,
     error: errorBlogs,
   } = useGetMyBlogsQuery();
@@ -33,8 +33,8 @@ const MyProfile = () => {
 
   return (
     <div className="mt-10 w-full">
-      <ProfileCard profile={profile} blog={Blogs} isOwnProfile={true} />
-      <Blogs Blogs={Blogs} />
+      <ProfileCard profile={profile} blog={blogs} isOwnProfile={true} />
+      <Blogs blogs={blogs} />
     </div>
   );
 };
