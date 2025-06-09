@@ -24,16 +24,23 @@ import UserPriviteRoutes from "./pages/user/UserPriviteRoutes.jsx";
 import MyProfile from "./pages/user/profile/MyProfile.jsx";
 import UserProfile from "./pages/user/profile/UserProfile.jsx";
 
+import FullBlog from "./pages/user/Blog/FullBlog.jsx";
+import CreateBlog from "./pages/user/Blog/CreateBlog.jsx";
+import EditBlog from "./pages/user/Blog/EditBlog.jsx";
+
 const router = createBrowserRouter(
   createRoutesFromChildren(
     <Route path="" element={<App />}>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/complete-profile" element={<CompleteProfile />} />
+      <Route path="/blog/:id" element={<FullBlog />} />
 
       <Route path="" element={<UserPriviteRoutes />}>
         <Route path="/my-profile" element={<MyProfile />} />
         <Route path="/user-profile/:id" element={<UserProfile />} />
+        <Route path="/create-blog" element={<CreateBlog />} />
+        <Route path="/edit-post/:id" element={<EditBlog />} />
       </Route>
     </Route>,
   ),
