@@ -1,5 +1,7 @@
 import Blog from "../Models/blogModel.js";
 import { uploadBlogImage, deleteBlogImage } from "../utils/Cloudinary.js";
+import View from "../Models/viewModel.js";
+
 const createABlog = async (req, res) => {
   try {
     const { title, content, category, visibility, description } = req.body;
@@ -49,8 +51,8 @@ const fetchBlogById = async (req, res) => {
     const blog = await Blog.findById(req.params.id)
       .populate("author", "userName avatar")
       .populate("category", "name");
-
-    res.status(200).json(blog);
+    const uniqueViews = await View.countDocuments({ blog: blog._id });
+    res.status(200).json({ ...blog.toObject(), uniqueViews });
   } catch (error) {
     res.status(500).json({ error: "Server error", details: error.message });
   }
@@ -184,6 +186,31 @@ const fetchBlogLikes = async (req, res) => {
   }
 };
 
+const registerView = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    const alreadyViewed = await View.findOne({
+      blog: req.params.id,
+      user: req.user.id,
+    });
+
+    if (!alreadyViewed) {
+      await View.create({ blog: req.params.id, user: req.user.id });
+      blog.views += 1;
+      await blog.save();
+    }
+
+    res.status(200).json({
+      message: alreadyViewed ? "Already viewed" : "New view recorded",
+      views: blog.views,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
 export {
   createABlog,
   FetchMyBlogs,
@@ -194,4 +221,5 @@ export {
   removeblog,
   togglelike,
   fetchBlogLikes,
+  registerView,
 };

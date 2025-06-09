@@ -9,6 +9,7 @@ import {
   removeblog,
   togglelike,
   fetchBlogLikes,
+  registerView,
 } from "../Controllers/blogControllers.js";
 import { upload } from "../Middleware/multerMiddleware.js";
 import { authenticate } from "../Middleware/authMiddleware.js";
@@ -31,5 +32,7 @@ router
 
 router.post("/blog/:id/like", authenticate, togglelike);
 router.get("/blog/:id/likes", fetchBlogLikes);
+
+router.post("/blog/:id/view", authenticate, registerView);
 
 export default router;
