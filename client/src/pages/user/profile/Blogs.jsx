@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const visibilityOptions = ["All", "me", "everyone"];
+
 const Blogs = ({ blogs = [], isOwnProfile = true }) => {
   const [activeVisibility, setActiveVisibility] = useState("All");
 
@@ -16,7 +17,7 @@ const Blogs = ({ blogs = [], isOwnProfile = true }) => {
     <div className="mx-auto max-w-[110rem] px-4 py-10">
       {isOwnProfile && (
         <div className="mb-6 flex flex-wrap justify-center gap-3">
-          {visibilityOptions.map((option) => {
+          {visibilityOptions.map((option) => (
             <button
               key={option}
               onClick={() => setActiveVisibility(option)}
@@ -27,10 +28,11 @@ const Blogs = ({ blogs = [], isOwnProfile = true }) => {
               }`}
             >
               {option}
-            </button>;
-          })}
+            </button>
+          ))}
         </div>
       )}
+
       {filteredBlogs.length === 0 ? (
         <div className="text-center text-gray-400">
           <p>
@@ -42,8 +44,39 @@ const Blogs = ({ blogs = [], isOwnProfile = true }) => {
           {filteredBlogs.map((blog) => (
             <div
               key={blog._id}
-              className="rounded-md bg-neutral-800 p-4 shadow transition hover:shadow-lg"
-            ></div>
+              className="rounded-md bg-neutral-100 p-4 shadow transition hover:shadow-lg dark:bg-neutral-800"
+            >
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={
+                    blog.blogImage?.url ||
+                    "https://images.pexels.com/photos/733857/pexels-photo-733857.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                  }
+                  alt={blog.title}
+                  className="h-64 w-full object-cover"
+                />
+                <div className="p-4">
+                  <h2 className="truncate text-xl font-semibold text-gray-800 dark:text-white">
+                    {blog.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-3 text-gray-600 dark:text-gray-300">
+                    {blog.description}
+                  </p>
+
+                  <div className="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <div>Views: {blog.views ?? 0}</div>
+                    <div>Likes: {blog.likes ?? 0}</div>
+                  </div>
+
+                  <Link
+                    to={`/blog/${blog._id}`}
+                    className="mt-4 inline-block text-blue-500 hover:underline"
+                  >
+                    Read More →
+                  </Link>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}

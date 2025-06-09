@@ -18,6 +18,8 @@ const UserProfile = () => {
     error: errorBlogs,
   } = useGetBlogsByUserQuery(id);
 
+  console.log(userBlogs);
+
   if (loadingProfile || loadingBlogs) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-neutral-500 text-white">
@@ -37,7 +39,7 @@ const UserProfile = () => {
   return (
     <div className="w-full">
       <ProfileCard profile={profile} blog={userBlogs} isOwnProfile={false} />
-      <Blogs Blogs={userBlogs} isOwnProfile={false} />
+      <Blogs blogs={userBlogs} isOwnProfile={false} />
     </div>
   );
 };

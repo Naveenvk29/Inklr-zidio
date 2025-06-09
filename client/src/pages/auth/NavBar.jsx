@@ -14,7 +14,11 @@ const NavBar = () => {
   const [logoutApi] = useLogoutMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
-  const { avatar, email, userName, role } = userInfo?.user || {};
+  const user = userInfo?.user;
+  const { avatar, email, userName, role, fullName } = userInfo?.user || {};
+
+  const firstName = fullName?.firstName;
+  const lastName = fullName?.lastName;
   const darkMode = useSelector((state) => state.theme.darkMode);
   const [isDropDown, setIsDropDown] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,10 +56,19 @@ const NavBar = () => {
       toast.error("Failed to log out", error.message);
     }
   };
+  const filterUser = allUser?.filter((user) => {
+    const userNameMatch = user.userName
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const firstNameMatch = user.fullName?.firstName
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const lastNameMatch = user.fullName?.lastName
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
-  const filterUser = allUser?.filter((user) =>
-    user.userName?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+    return userNameMatch || firstNameMatch || lastNameMatch;
+  });
 
   return (
     <div className="sticky inset-x-0 top-2 z-[100] w-full bg-transparent">
@@ -90,12 +103,14 @@ const NavBar = () => {
                 >
                   <div className="flex items-center justify-center gap-3">
                     <img
-                      src={user?.avatar.url}
+                      src={user?.avatar?.url}
                       alt={userName}
                       className="h-8 w-8 rounded-full object-cover"
                     />
                     <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-300">
-                      {user?.userName}
+                      {user?.userName
+                        ? user.userName
+                        : `${user.fullName.firstName} ${user.fullName.lastName}`}
                     </h3>
                   </div>
                 </li>
