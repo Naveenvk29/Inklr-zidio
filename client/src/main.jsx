@@ -27,10 +27,12 @@ import UserProfile from "./pages/user/profile/UserProfile.jsx";
 import FullBlog from "./pages/user/Blog/FullBlog.jsx";
 import CreateBlog from "./pages/user/Blog/CreateBlog.jsx";
 import EditBlog from "./pages/user/Blog/EditBlog.jsx";
+import Home from "./pages/home/Home.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
     <Route path="" element={<App />}>
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/complete-profile" element={<CompleteProfile />} />

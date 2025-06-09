@@ -80,44 +80,46 @@ const NavBar = () => {
           🌑 <span>Inklr</span>
         </Link>
 
-        <div className="relative w-full max-w-md">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full rounded-full border border-gray-300 px-4 py-2 text-sm text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        {userInfo && (
+          <div className="relative w-full max-w-md">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full rounded-full border border-gray-300 px-4 py-2 text-sm text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            {searchTerm && filterUser?.length > 0 && (
+              <ul className="absolute z-50 mt-2 w-full items-start rounded-2xl bg-white shadow dark:bg-neutral-700">
+                {filterUser.slice(0, 5).map((user) => (
+                  <li
+                    key={user._id}
+                    className="cursor-pointer px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-neutral-600"
+                    onClick={() => {
+                      navigate(`/user-profile/${user._id}`);
+                      setSearchTerm("");
+                    }}
+                  >
+                    <div className="flex items-center justify-center gap-3">
+                      <img
+                        src={user?.avatar?.url}
+                        alt={userName}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                      <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-300">
+                        {user?.userName
+                          ? user.userName
+                          : `${user.fullName.firstName} ${user.fullName.lastName}`}
+                      </h3>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-          {searchTerm && filterUser?.length > 0 && (
-            <ul className="absolute z-50 mt-2 w-full items-start rounded-2xl bg-white shadow dark:bg-neutral-700">
-              {filterUser.slice(0, 5).map((user) => (
-                <li
-                  key={user._id}
-                  className="cursor-pointer px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-neutral-600"
-                  onClick={() => {
-                    navigate(`/user-profile/${user._id}`);
-                    setSearchTerm("");
-                  }}
-                >
-                  <div className="flex items-center justify-center gap-3">
-                    <img
-                      src={user?.avatar?.url}
-                      alt={userName}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                    <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-300">
-                      {user?.userName
-                        ? user.userName
-                        : `${user.fullName.firstName} ${user.fullName.lastName}`}
-                    </h3>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        )}
 
         <div className="flex items-center space-x-5">
           {userInfo && (

@@ -18,8 +18,6 @@ const UserProfile = () => {
     error: errorBlogs,
   } = useGetBlogsByUserQuery(id);
 
-  console.log(userBlogs);
-
   if (loadingProfile || loadingBlogs) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-neutral-500 text-white">
@@ -28,10 +26,18 @@ const UserProfile = () => {
     );
   }
 
-  if (errorProfile || errorBlogs) {
+  if (errorProfile) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-neutral-500 text-red-500">
         Failed to load data.
+      </div>
+    );
+  }
+
+  if (errorBlogs) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-neutral-500 text-red-500">
+        Failed to load blog data.
       </div>
     );
   }

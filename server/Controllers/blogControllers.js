@@ -33,7 +33,7 @@ const createABlog = async (req, res) => {
 
 const FetchAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find()
+    const blogs = await Blog.find({ visibility: "everyone" })
       .populate("author", "userName avatar")
       .populate("category", "name")
       .sort({ createdAt: -1 });
