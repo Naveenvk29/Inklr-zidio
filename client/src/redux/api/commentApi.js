@@ -5,7 +5,7 @@ const commentApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     addComment: builder.mutation({
       query: (data) => ({
-        url: `${COMMENT_URL}/comment`,
+        url: `${COMMENT_URL}`,
         method: "POST",
         body: data,
       }),

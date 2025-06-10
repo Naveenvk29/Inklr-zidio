@@ -3,3 +3,4 @@ export const USERS_URL = `${BASE_URL}/users`;
 export const CATEGORY_URL = `${BASE_URL}/categories`;
 export const BLOG_URL = `${BASE_URL}/blogs`;
 export const COMMENT_URL = `${BASE_URL}/comments`;
+export const ADMIN_URL = `${BASE_URL}/admin`;
