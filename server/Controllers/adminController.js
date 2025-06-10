@@ -49,14 +49,14 @@ const removingUserById = async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     if (user.avatar?.public_id) {
-      await deleteUserAvatar(user.avatar?.public_id);
+      await deleteUserAvatar(user.avatar.public_id);
     }
 
-    const userBlog = await Blog.findById({ author: user._id });
+    const userBlogs = await Blog.find({ author: user._id });
 
-    for (const post of userBlog) {
+    for (const post of userBlogs) {
       if (post.blogImage?.public_id) {
-        await deleteBlogImage(post.blogImage.public_id);
+        await deleteBlogImage(post?.blogImage?.public_id);
       }
     }
 
@@ -79,7 +79,7 @@ const fetchReportedComment = async (req, res) => {
   try {
     const comments = await Comment.find({ "reports.0": { $exists: true } })
       .populate("user", "userName fullName")
-      .populate("post", "title");
+      .populate("blog", "title");
 
     res.status(200).json(comments);
   } catch (error) {
@@ -89,11 +89,21 @@ const fetchReportedComment = async (req, res) => {
 
 const toggleHideCommentByAdmin = async (req, res) => {
   try {
-    const comments = await Comment.find({ "reports.0": { $exists: true } })
+    const comment = await Comment.findById(req.params.id)
       .populate("user", "userName fullName")
-      .populate("post", "title");
+      .populate("blog", "title");
 
-    res.status(200).json(comments);
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    comment.isHidden = !comment.isHidden;
+    await comment.save();
+
+    res.status(200).json({
+      message: `Comment is now ${comment.isHidden ? "hidden" : "visible"}`,
+      comment,
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error", details: error.message });
   }

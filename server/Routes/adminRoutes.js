@@ -19,14 +19,14 @@ const router = Router();
 router.get("/stats", authenticate, authorizedAsAdmin, fetchAdminStats);
 
 router.patch(
-  "/users/:id/role",
+  "/user/:id/role",
   authenticate,
   authorizedAsAdmin,
   modifyRoleofUserByAdmin
 );
-router.delete("/users/:id", authenticate, authorizedAsAdmin, removingUserById);
-outer.patch(
-  "/users/:id/ban",
+router.delete("/user/:id", authenticate, authorizedAsAdmin, removingUserById);
+router.patch(
+  "/user/:id/ban",
   authenticate,
   authorizedAsAdmin,
   toggleBanUserByAdmin

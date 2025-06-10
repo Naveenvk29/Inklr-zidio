@@ -29,6 +29,6 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/blogs", blogRoutes);
 app.use("/api/v1/comments", commentRoutes);
-app.use("/api/v1/comments", adminRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 export { app };

@@ -9,7 +9,7 @@ import { authenticate } from "../Middleware/authMiddleware.js";
 
 const router = Router();
 
-router.post("/comment", authenticate, addComment);
+router.post("/", authenticate, addComment);
 router.get("/:blogId", fetchAllCommentsByBlog);
 router.post("/comment/:id/report", authenticate, reportComment);
 router.delete("/comment/:id", authenticate, deleteComment);
