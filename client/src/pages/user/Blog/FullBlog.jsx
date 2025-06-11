@@ -1,6 +1,14 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useGetBlogByIdQuery } from "../../../redux/api/blogApi";
+import {
+  useGetBlogByIdQuery,
+  useRegisterViewMutation,
+  useToggleLikeMutation,
+  useGetlikeofblogQuery,
+} from "../../../redux/api/blogApi";
 import { useSelector } from "react-redux";
+import CommentSection from "../../../components/comments/CommentSection";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const FullBlog = () => {
   const { id } = useParams();
@@ -8,14 +16,28 @@ const FullBlog = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const { data: blog, isLoading, isError } = useGetBlogByIdQuery(id);
+  const [registerView] = useRegisterViewMutation();
+  const [toggleLike] = useToggleLikeMutation();
+  useEffect(() => {
+    if (id) registerView(id);
+    console.log(id);
+  }, [id, registerView]);
 
+  const handleLike = async () => {
+    try {
+      await toggleLike(id);
+    } catch (err) {
+      toast.error("Failed to like/unlike the blog", err);
+    }
+  };
+
+  //
   if (isLoading) {
     return <div className="p-6 text-white">Loading....</div>;
   }
   if (isError || !blog) {
     return <div className="p-6 text-red-400">Failed to load blog.</div>;
   }
-
   const {
     title,
     content,
@@ -89,7 +111,14 @@ const FullBlog = () => {
         />
       )}
       <div className="mb-6 flex gap-6 text-sm text-neutral-900 dark:text-neutral-100">
-        <span>❤️ {likes.length} likes</span>
+        <button
+          onClick={handleLike}
+          className="cursor-pointer text-sm text-red-500"
+        >
+          {likes.length}
+
+          {likes.map(String).includes(userInfo?.user?.id) ? "❤️" : "🤍"}
+        </button>
         <span>💬 0 comments</span>
         <span>👁️ {views} views</span>
       </div>
@@ -97,6 +126,7 @@ const FullBlog = () => {
         className="prose prose-invert max-w-none text-lg leading-relaxed text-neutral-900 dark:text-neutral-200"
         dangerouslySetInnerHTML={{ __html: content }}
       />
+      <CommentSection blogId={id} />
     </div>
   );
 };

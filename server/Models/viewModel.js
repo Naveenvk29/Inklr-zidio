@@ -13,7 +13,7 @@ const viewSchema = new mongoose.Schema({
   },
   viewedAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

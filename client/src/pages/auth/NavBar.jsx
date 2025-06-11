@@ -125,7 +125,7 @@ const NavBar = () => {
           {userInfo && (
             <div className="flex items-center justify-center gap-4">
               <Link
-                to={"/write"}
+                to={"/create-blog"}
                 className="flex items-center space-x-1 text-sm"
               >
                 <Edit

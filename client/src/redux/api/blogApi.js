@@ -79,9 +79,15 @@ const blogApi = apiSlice.injectEndpoints({
       }),
       providesTags: (result, error, id) => [{ type: "Like", id }],
     }),
+    registerView: builder.mutation({
+      query: (id) => ({
+        url: `${BLOG_URL}/blog/${id}/view`,
+        method: `POST`,
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Blog", id }],
+    }),
   }),
 });
-
 export const {
   useGetAllBlogsQuery,
   useGetBlogByIdQuery,
@@ -92,4 +98,5 @@ export const {
   useDeleteBlogMutation,
   useToggleLikeMutation,
   useGetlikeofblogQuery,
+  useRegisterViewMutation,
 } = blogApi;
