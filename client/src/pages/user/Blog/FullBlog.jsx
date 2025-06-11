@@ -3,12 +3,12 @@ import {
   useGetBlogByIdQuery,
   useRegisterViewMutation,
   useToggleLikeMutation,
-  useGetlikeofblogQuery,
 } from "../../../redux/api/blogApi";
 import { useSelector } from "react-redux";
 import CommentSection from "../../../components/comments/CommentSection";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { useFetchAllCommentsByBlogQuery } from "../../../redux/api/commentApi";
 
 const FullBlog = () => {
   const { id } = useParams();
@@ -30,6 +30,7 @@ const FullBlog = () => {
       toast.error("Failed to like/unlike the blog", err);
     }
   };
+  const { data: comments = [] } = useFetchAllCommentsByBlogQuery(id);
 
   //
   if (isLoading) {
@@ -119,7 +120,7 @@ const FullBlog = () => {
 
           {likes.map(String).includes(userInfo?.user?.id) ? "❤️" : "🤍"}
         </button>
-        <span>💬 0 comments</span>
+        <span>💬 {comments.length} comments</span>
         <span>👁️ {views} views</span>
       </div>
       <div
