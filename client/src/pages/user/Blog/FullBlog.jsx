@@ -89,8 +89,7 @@ const FullBlog = () => {
         {author._id !== userInfo?.user?.id && (
           <FollowButton
             id={author._id}
-            className="rounded bg-blue-500 px-4 py-2 text-white"
-            initialIsFollowing={author?.isFollowing}
+            className="rounded bg-blue-500 px-2 py-1 text-white"
           />
         )}
       </div>

@@ -10,7 +10,10 @@ const UserProfile = () => {
     data: profile,
     isLoading: loadingProfile,
     error: errorProfile,
-  } = useGetUserByIdQuery(id);
+  } = useGetUserByIdQuery(id, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
 
   const {
     data: userBlogs,

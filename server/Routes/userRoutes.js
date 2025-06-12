@@ -9,10 +9,9 @@ import {
   fetchAllUsers,
   fetchCurrentUser,
   fetchUserById,
-  followUser,
-  unfollowUser,
   getFollowers,
   getFollowing,
+  toggleFollowUser,
 } from "../Controllers/userControllers.js";
 import { authenticate } from "../Middleware/authMiddleware.js";
 import { upload } from "../Middleware/multerMiddleware.js";
@@ -44,8 +43,8 @@ router.route("/").get(fetchAllUsers);
 router.route("/:id").get(fetchUserById);
 
 // Follow/Unfollow routes
-router.put("/follow/:id", authenticate, followUser);
-router.put("/unfollow/:id", authenticate, unfollowUser);
+
+router.put("/toggle-follow/:id", authenticate, toggleFollowUser);
 
 // Get followers and following
 router.get("/:id/followers", authenticate, getFollowers);

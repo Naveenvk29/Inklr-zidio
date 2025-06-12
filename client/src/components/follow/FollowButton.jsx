@@ -1,52 +1,42 @@
+import { useSelector } from "react-redux";
 import {
-  useFollowMutation,
-  useUnfollowMutation,
+  useToggleFollowMutation,
+  useGetFollowingsQuery,
 } from "../../redux/api/userApi";
-import { useState, useEffect } from "react";
 
-const FollowButton = ({ id, classname, initialIsFollow = false }) => {
-  const [followUser, { isLoading: isFollowing }] = useFollowMutation();
-  const [unfollowUser, { isLoading: isUnfollowing }] = useUnfollowMutation();
+const FollowButton = ({ id: targetUserId, className = "" }) => {
+  const { userInfo } = useSelector((state) => state.auth);
+  const currentUserId = userInfo?.user?.id;
+  const {
+    data: followings,
+    refetch: refetchFollowings,
+    isLoading: loadingFollowings,
+  } = useGetFollowingsQuery(currentUserId);
 
-  const [localIsFollowing, setLocalIsFollowing] = useState(initialIsFollow);
+  const [toggleFollow, { isLoading: isToggling }] = useToggleFollowMutation();
+  const followingArray = followings?.following || [];
+  const isFollowing = followingArray.some((user) => user._id === targetUserId);
 
-  useEffect(() => {
-    setLocalIsFollowing(initialIsFollow);
-  }, [initialIsFollow]);
-
-  const handleFollow = async () => {
+  const handleToggleFollow = async () => {
     try {
-      if (!localIsFollowing) {
-        await followUser(id).unwrap();
-        setLocalIsFollowing(true);
-      } else {
-        await unfollowUser(id).unwrap();
-        setLocalIsFollowing(false);
-      }
-    } catch (error) {
-      if (error?.data?.message === "Already following this user") {
-        console.warn("User is already followed. Updating local state.");
-        setLocalIsFollowing(true);
-      } else if (error?.data?.message === "Not following this user") {
-        console.warn("User is not followed. Updating local state.");
-        setLocalIsFollowing(false);
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      await toggleFollow(targetUserId).unwrap();
+      refetchFollowings();
+    } catch (err) {
+      console.error("Error toggling follow:", err);
     }
   };
 
+  if (!currentUserId || !targetUserId || loadingFollowings) {
+    return <div>Follow button not ready</div>;
+  }
+
   return (
     <button
-      onClick={handleFollow}
-      disabled={isFollowing || isUnfollowing}
-      className={classname}
+      onClick={handleToggleFollow}
+      disabled={isToggling}
+      className={className}
     >
-      {isFollowing || isUnfollowing
-        ? "Processing.."
-        : localIsFollowing
-          ? "unfollow"
-          : "follow"}
+      {isToggling ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
     </button>
   );
 };

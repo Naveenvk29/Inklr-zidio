@@ -64,30 +64,21 @@ const userApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    follow: builder.mutation({
-      query: (id) => ({
-        url: `${USERS_URL}/follow/${id}`,
-        method: "PUT",
-      }),
-      invalidatesTags: ["User"],
-    }),
-    unfollow: builder.mutation({
-      query: (id) => ({
-        url: `${USERS_URL}/unfollow/${id}`,
-        method: "PUT",
-      }),
-    }),
-    getFollowers: builder.query({
-      query: (id) => ({
-        url: `${USERS_URL}/${id}/followers`,
-        method: "GET",
-      }),
-    }),
     getFollowings: builder.query({
       query: (id) => ({
         url: `${USERS_URL}/${id}/following`,
         method: "GET",
       }),
+    }),
+    toggleFollow: builder.mutation({
+      query: (id) => ({
+        url: `${USERS_URL}/toggle-follow/${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: (result, error, id) => [
+        { type: "Followings", id: "LIST" },
+        { type: "Followers", id },
+      ],
     }),
   }),
 });
@@ -102,8 +93,7 @@ export const {
   useDeleteUserProfileMutation,
   useGetAllUserQuery,
   useGetUserByIdQuery,
-  useFollowMutation,
-  useUnfollowMutation,
   useGetFollowersQuery,
   useGetFollowingsQuery,
+  useToggleFollowMutation,
 } = userApi;
