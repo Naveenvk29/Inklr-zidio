@@ -1,6 +1,8 @@
+import FollowButton from "../../../components/follow/FollowButton";
 import { Link } from "react-router-dom";
 const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
   const {
+    _id,
     fullName,
     userName,
     bio,
@@ -43,9 +45,11 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
                 </>
               ) : (
                 <>
-                  <button className="rounded bg-blue-500 px-5 py-1 text-sm font-medium text-white">
-                    Follow
-                  </button>
+                  <FollowButton
+                    id={_id}
+                    className="rounded bg-blue-500 px-4 py-2 text-white"
+                    initialIsFollowing={profile.isFollowing}
+                  />
                   <button className="rounded bg-blue-500 px-5 py-1 text-sm font-medium text-white">
                     Share Profile
                   </button>

@@ -9,6 +9,7 @@ import CommentSection from "../../../components/comments/CommentSection";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useFetchAllCommentsByBlogQuery } from "../../../redux/api/commentApi";
+import FollowButton from "../../../components/follow/FollowButton";
 
 const FullBlog = () => {
   const { id } = useParams();
@@ -85,9 +86,13 @@ const FullBlog = () => {
             Edit
           </Link>
         )}
-        <button className="ml-auto rounded-md bg-gray-600 px-3 py-1 text-sm text-white hover:bg-gray-700">
-          Follow
-        </button>
+        {author._id !== userInfo?.user?.id && (
+          <FollowButton
+            id={author._id}
+            className="rounded bg-blue-500 px-4 py-2 text-white"
+            initialIsFollowing={author?.isFollowing}
+          />
+        )}
       </div>
 
       <p className="text-lg font-semibold">{description}</p>
