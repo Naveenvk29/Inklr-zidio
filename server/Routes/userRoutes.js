@@ -12,6 +12,7 @@ import {
   getFollowers,
   getFollowing,
   toggleFollowUser,
+  changeCurrentUserPassword,
 } from "../Controllers/userControllers.js";
 import { authenticate } from "../Middleware/authMiddleware.js";
 import { upload } from "../Middleware/multerMiddleware.js";
@@ -36,8 +37,8 @@ router
   .route("/profile")
   .get(authenticate, fetchCurrentUser)
   .put(upload.single("avatar"), authenticate, modityCurrentUserProfile)
-  .delete(authenticate, deleteCurrentUserProfile);
-
+  .delete(authenticate, deleteCurrentUserProfile)
+  .patch(authenticate, changeCurrentUserPassword);
 // User fetching
 router.route("/").get(fetchAllUsers);
 router.route("/:id").get(fetchUserById);

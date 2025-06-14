@@ -192,6 +192,30 @@ const modityCurrentUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
+const changeCurrentUserPassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  user.password = req.body.password || user.password;
+
+  const updatedUser = await user.save();
+  res.status(200).json({
+    message: "User profile updated successfully.",
+    user: {
+      id: updatedUser._id,
+      fullName: updatedUser.fullName,
+      userName: updatedUser.userName,
+      email: updatedUser.email,
+      avatar: updatedUser.avatar,
+      bio: updatedUser.bio,
+      role: updatedUser.role,
+    },
+  });
+});
+
 const deleteCurrentUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
   if (!user) {
@@ -289,4 +313,5 @@ export {
   getFollowers,
   getFollowing,
   toggleFollowUser,
+  changeCurrentUserPassword,
 };

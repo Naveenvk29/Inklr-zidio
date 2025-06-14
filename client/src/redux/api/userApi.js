@@ -70,6 +70,12 @@ const userApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getFollowers: builder.query({
+      query: (id) => ({
+        url: `${USERS_URL}/${id}/followers`,
+        method: "GET",
+      }),
+    }),
     toggleFollow: builder.mutation({
       query: (id) => ({
         url: `${USERS_URL}/toggle-follow/${id}`,
@@ -79,6 +85,14 @@ const userApi = apiSlice.injectEndpoints({
         { type: "Followings", id: "LIST" },
         { type: "Followers", id },
       ],
+    }),
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/profile`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
@@ -96,4 +110,5 @@ export const {
   useGetFollowersQuery,
   useGetFollowingsQuery,
   useToggleFollowMutation,
+  useChangePasswordMutation,
 } = userApi;
