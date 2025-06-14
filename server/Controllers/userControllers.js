@@ -142,42 +142,54 @@ const completeUserProfile = asyncHandler(async (req, res) => {
 
 const modityCurrentUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
-
   if (!user) {
-    return res.status(404).json({
-      message: "User not found",
-    });
+    return res.status(404).json({ message: "User not found" });
   }
 
+  // 1. Avatar upload
   if (req.file) {
     if (user.avatar?.public_id) {
-      console.log("Deleting public_id:", user.avatar?.public_id);
       await deleteUserAvatar(user.avatar.public_id);
     }
     const avatarImg = await uploadUserAvatar(req.file);
     if (!avatarImg) {
-      res.status(400);
-      throw new Error("Failed to upload profile picture");
+      return res
+        .status(400)
+        .json({ message: "Failed to upload profile picture" });
     }
     user.avatar = avatarImg;
   }
-  const { userName, bio, email } = req.body;
 
-  if (userName) {
-    const existingUserName = await User.findOne({ userName });
+  // 2. Username check (only if present)
+  if (req.body?.userName) {
+    const existingUserName = await User.findOne({
+      userName: req.body.userName,
+    });
     if (
       existingUserName &&
       existingUserName._id.toString() !== user._id.toString()
     ) {
       return res.status(400).json({ message: "Username already taken." });
     }
-    user.userName = userName;
+    user.userName = req.body.userName;
   }
 
-  if (bio) user.bio = bio;
-  if (email) user.email = email;
+  // 3. Full name update (if both parts present)
+  if (req.body?.fullName) {
+    user.fullName = req.body.fullName;
+  } else if (req.body?.firstName || req.body?.lastName) {
+    user.fullName = {
+      firstName: req.body.firstName || user.fullName.firstName,
+      lastName: req.body.lastName || user.fullName.lastName,
+    };
+  }
+
+  // 4. Optional fields
+  if (req.body?.bio) user.bio = req.body.bio;
+  if (req.body?.email) user.email = req.body.email;
 
   const updatedUser = await user.save();
+
   res.status(200).json({
     message: "User profile updated successfully.",
     user: {

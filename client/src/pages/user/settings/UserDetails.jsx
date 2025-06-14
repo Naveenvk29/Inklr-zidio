@@ -30,12 +30,13 @@ const UserDetails = ({ profile, updateUser }) => {
     };
 
     try {
-      await updateUser(updateUserInfo).unwap();
-      dispatch(updateUserInfo(updatedInfo));
+      const result = await updateUser(updatedInfo).unwrap();
+      dispatch(updateUserInfo(result));
       toast.success("User details updated!");
     } catch (error) {
       toast.error("Failed to update user details.");
       console.error(error);
+      console.log(error);
     }
   };
 

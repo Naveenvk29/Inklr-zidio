@@ -37,9 +37,9 @@ const Profile = ({ profile, updateUser, refetch }) => {
         formData.append("avatar", avatar);
       }
 
-      await updateUser(formData).unwrap();
+      const res = await updateUser(formData).unwrap();
       refetch();
-      dispatch(updateUserInfo(profile.user));
+      dispatch(updateUserInfo(res));
 
       toast.success("Profile updated successfully!");
     } catch (error) {
