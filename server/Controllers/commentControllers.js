@@ -36,7 +36,7 @@ const fetchAllCommentsByBlog = async (req, res) => {
       parentComment: null,
       isHidden: false,
     })
-      .populate("user", "userName profilePicture")
+      .populate("user", "userName avatar")
       .sort({ createdAt: -1 });
 
     const commentsWithReplies = await Promise.all(
@@ -45,7 +45,7 @@ const fetchAllCommentsByBlog = async (req, res) => {
           parentComment: comment._id,
           isHidden: false,
         })
-          .populate("user", "userName profilePicture")
+          .populate("user", "userName avatar")
           .sort({ createdAt: 1 });
 
         return { ...comment.toObject(), replies };

@@ -14,6 +14,7 @@ const CommentSection = ({ blogId }) => {
   const { data: comments = [] } = useFetchAllCommentsByBlogQuery(blogId);
   const [deleteComment] = useDeleteCommentMutation();
   const [reportComment] = useReportCommentMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
   const handleAdd = async (text, parentComment = null) => {
     try {
@@ -23,10 +24,6 @@ const CommentSection = ({ blogId }) => {
       toast.error("Failed to comment");
     }
   };
-  const { userInfo } = useSelector((state) => state.auth);
-
-  const rootComment = comments.filter((c) => !c.parentComment);
-  const getReplies = (id) => comments.filter((c) => c.parentComment === id);
 
   const handleDelete = async (id) => {
     try {
@@ -46,6 +43,12 @@ const CommentSection = ({ blogId }) => {
     }
   };
 
+  // Flat → threaded
+  const getReplies = (parentId) =>
+    comments.filter((c) => c.parentComment === parentId);
+
+  const rootComments = comments.filter((c) => !c.parentComment);
+
   return (
     <div className="mt-10">
       <h3 className="mb-4 text-xl font-extrabold text-neutral-950 dark:text-neutral-100">
@@ -54,16 +57,19 @@ const CommentSection = ({ blogId }) => {
       <CommentForm onSubmit={(text) => handleAdd(text)} />
 
       <div className="mt-4 space-y-4">
-        {rootComment.length ? (
-          rootComment.map((comment) => (
+        {rootComments.length ? (
+          rootComments.map((comment) => (
             <CommentItem
               key={comment._id}
               comment={comment}
               currentUserId={userInfo?.user?.id}
-              onReply={(parentComment, text) => handleAdd(text, parentComment)}
+              onReply={(parentCommentId, text) =>
+                handleAdd(text, parentCommentId)
+              }
               onDelete={handleDelete}
               onReport={handleReport}
-              replies={getReplies(comment._id)}
+              getReplies={getReplies} // ✅ Only this
+              depth={0}
             />
           ))
         ) : (
