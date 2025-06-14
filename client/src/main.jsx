@@ -29,6 +29,8 @@ import CreateBlog from "./pages/user/Blog/CreateBlog.jsx";
 import EditBlog from "./pages/user/Blog/EditBlog.jsx";
 import Home from "./pages/home/Home.jsx";
 import Settings from "./pages/user/settings/setting.jsx";
+import Stats from "./pages/user/stats/Stats.jsx";
+import AdminPrivateRoute from "./pages/admin/AdminPrivateRoute.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
@@ -45,7 +47,10 @@ const router = createBrowserRouter(
         <Route path="/create-blog" element={<CreateBlog />} />
         <Route path="/edit-post/:id" element={<EditBlog />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/stats" element={<Stats />} />
       </Route>
+
+      <Route path="/admin" element={<AdminPrivateRoute />}></Route>
     </Route>,
   ),
 );
