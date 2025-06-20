@@ -1,4 +1,5 @@
 import Comment from "../Models/commentModel.js";
+import mongoose from "mongoose";
 
 const addComment = async (req, res) => {
   try {
@@ -29,30 +30,88 @@ const addComment = async (req, res) => {
 
 const fetchAllCommentsByBlog = async (req, res) => {
   try {
-    const { blogId } = req.params;
-
-    const comments = await Comment.find({
-      blog: blogId,
-      parentComment: null,
-      isHidden: false,
-    })
-      .populate("user", "userName avatar")
-      .sort({ createdAt: -1 });
-
-    const commentsWithReplies = await Promise.all(
-      comments.map(async (comment) => {
-        const replies = await Comment.find({
-          parentComment: comment._id,
+    const comments = await Comment.aggregate([
+      {
+        $match: {
+          blog: new mongoose.Types.ObjectId(req.params.blogId),
+          parentComment: null,
           isHidden: false,
-        })
-          .populate("user", "userName avatar")
-          .sort({ createdAt: 1 });
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          let: { userId: "$user" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$_id", "$$userId"],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                username: 1,
+                fullName: 1,
+                avatar: 1,
+              },
+            },
+          ],
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $lookup: {
+          from: "comments",
+          let: { parentId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$parentComment", "$$parentId"] },
+                    { $eq: ["$isHidden", false] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                let: { userId: "$user" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$_id", "$$userId"],
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      username: 1,
+                      fullName: 1,
+                      avatar: 1,
+                    },
+                  },
+                ],
+                as: "user",
+              },
+            },
+            { $unwind: "$user" },
+            { $sort: { createdAt: 1 } },
+          ],
+          as: "replies",
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]);
 
-        return { ...comment.toObject(), replies };
-      })
-    );
-
-    res.status(200).json(commentsWithReplies);
+    res.status(200).json(comments);
   } catch (error) {
     res
       .status(500)
