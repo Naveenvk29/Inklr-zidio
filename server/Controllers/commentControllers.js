@@ -53,7 +53,7 @@ const fetchAllCommentsByBlog = async (req, res) => {
             {
               $project: {
                 _id: 1,
-                username: 1,
+                userName: 1,
                 fullName: 1,
                 avatar: 1,
               },
@@ -93,7 +93,7 @@ const fetchAllCommentsByBlog = async (req, res) => {
                   {
                     $project: {
                       _id: 1,
-                      username: 1,
+                      userName: 1,
                       fullName: 1,
                       avatar: 1,
                     },

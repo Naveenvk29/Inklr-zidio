@@ -14,9 +14,10 @@ const commentApi = apiSlice.injectEndpoints({
       ],
     }),
     reportComment: builder.mutation({
-      query: (id) => ({
+      query: ({ id, reason }) => ({
         url: `${COMMENT_URL}/comment/${id}/report`,
         method: "POST",
+        body: { reason },
       }),
     }),
     deleteComment: builder.mutation({
