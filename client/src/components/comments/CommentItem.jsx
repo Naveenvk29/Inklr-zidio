@@ -3,6 +3,7 @@ import CommentForm from "./CommentForm";
 import { useReportCommentMutation } from "../../redux/api/commentApi";
 import toast from "react-hot-toast";
 import ReportModal from "./ReportModal";
+import { Link } from "react-router-dom";
 
 const CommentItem = ({
   comment,
@@ -12,9 +13,9 @@ const CommentItem = ({
   depth = 0,
 }) => {
   const [isReplying, setIsReplying] = useState(false);
-  const [showReplies, setShowReplies] = useState(true);
-  const [reportComment] = useReportCommentMutation();
+  const [showReplies, setShowReplies] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [reportComment] = useReportCommentMutation();
 
   const isOwnComment = currentUserId === comment.user._id;
 
@@ -22,107 +23,125 @@ const CommentItem = ({
     try {
       await reportComment({ id: comment._id, reason }).unwrap();
       toast.success("Reported successfully");
-    } catch (err) {
-      toast.error(err?.data?.message || "Failed to report");
+    } catch (error) {
+      const errorMessage = error?.data?.error || "Failed to report";
+
+      if (errorMessage.toLowerCase().includes("already reported")) {
+        toast.error("You have already reported this comment.");
+      } else {
+        toast.error(errorMessage);
+      }
     }
   };
 
   return (
-    <div className="relative pl-6">
-      <div className="relative mb-4 ml-2 rounded-md bg-white p-4 shadow-sm dark:bg-neutral-900">
-        {/* Avatar & Name */}
-        <div className="mb-2 flex items-center gap-3">
-          <img
-            src={comment.user.avatar}
-            alt={comment.user.userName}
-            className="h-8 w-8 rounded-full object-cover"
-          />
-          <span className="text-sm font-semibold text-neutral-800 dark:text-white">
-            {comment.user.userName}
-          </span>
-        </div>
-
-        {/* Text */}
-        <p className="mb-2 text-sm text-neutral-700 dark:text-neutral-300">
-          {comment.comment}
-        </p>
-
-        {/* Date */}
-        <p className="mb-2 text-xs text-neutral-400">
-          {new Date(comment.createdAt).toLocaleString()}
-        </p>
-
-        {/* Actions */}
-        <div className="flex gap-3 text-xs text-blue-600 dark:text-blue-400">
-          <button
-            onClick={() => setIsReplying(!isReplying)}
-            className="hover:underline"
+    <div
+      className="mb-4 pb-2 dark:text-neutral-500"
+      style={{ marginLeft: `${depth * 20}px` }}
+    >
+      <div className="flex justify-between">
+        <div className="flex-1 px-3 py-1">
+          <Link
+            to={`/user-profile/${comment.user._id}`}
+            className="flex items-center gap-2"
           >
-            {isReplying ? "Cancel" : "Reply"}
-          </button>
-          {isOwnComment ? (
+            <img
+              src={comment.user.avatar?.url}
+              alt={comment.user.userName}
+              className="h-8 w-8 rounded-full"
+            />
+            <span className="text-neutral-500 hover:text-neutral-900 hover:dark:text-neutral-300">
+              {comment.user.userName}
+            </span>
+          </Link>
+          <div className="mt-1 flex items-center gap-4">
+            <p className="text-md font-semibold dark:text-neutral-100">
+              {comment.comment}
+            </p>
+            <p className="text-sm text-gray-400">
+              {new Date(comment.createdAt).toLocaleString([], {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </p>
+          </div>
+
+          <div className="mt-2 flex gap-4 text-sm">
             <button
-              onClick={() => onDelete(comment._id)}
-              className="text-red-500 hover:underline"
+              onClick={() => setIsReplying((prev) => !prev)}
+              className="text-blue-500 hover:underline"
             >
-              Delete
+              {isReplying ? "Cancel" : "Reply"}
             </button>
-          ) : (
-            <div>
+
+            {!isOwnComment && (
               <button
                 onClick={() => setIsReportOpen(true)}
-                className="text-yellow-600 hover:underline"
+                className="text-red-500 hover:underline"
               >
                 Report
               </button>
+            )}
 
-              <ReportModal
-                isOpen={isReportOpen}
-                onClose={() => setIsReportOpen(false)}
-                onSubmit={handleReportSubmit}
+            {isOwnComment && (
+              <button
+                onClick={() => onDelete(comment._id)}
+                className="text-red-600 hover:underline"
+              >
+                Delete
+              </button>
+            )}
+
+            {comment.replies?.length > 0 && (
+              <button
+                onClick={() => setShowReplies((prev) => !prev)}
+                className="text-gray-500 hover:underline"
+              >
+                {showReplies
+                  ? "Hide Replies"
+                  : `Show Replies (${comment.replies.length})`}
+              </button>
+            )}
+          </div>
+
+          {isReplying && (
+            <div className="mt-3">
+              <CommentForm
+                submitLabel="Reply"
+                onSubmit={(text) => {
+                  onReply(comment._id, text);
+                  setIsReplying(false);
+                }}
               />
             </div>
           )}
-          {comment.replies?.length > 0 && (
-            <button
-              onClick={() => setShowReplies(!showReplies)}
-              className="hover:underline"
-            >
-              {showReplies
-                ? "Hide Replies"
-                : `Show Replies (${comment.replies.length})`}
-            </button>
+
+          {showReplies && comment.replies?.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {comment.replies.map((reply) => (
+                <CommentItem
+                  key={reply._id}
+                  comment={reply}
+                  currentUserId={currentUserId}
+                  onReply={onReply}
+                  onDelete={onDelete}
+                  depth={depth + 1}
+                />
+              ))}
+            </div>
           )}
         </div>
-
-        {/* Reply Form */}
-        {isReplying && (
-          <div className="mt-3">
-            <CommentForm
-              submitLabel="Reply"
-              onSubmit={(text) => {
-                onReply(comment._id, text);
-                setIsReplying(false);
-              }}
-            />
-          </div>
-        )}
       </div>
 
-      {/* Child Comments */}
-      {showReplies && comment.replies?.length > 0 && (
-        <div className="space-y-2">
-          {comment.replies.map((reply) => (
-            <CommentItem
-              key={reply._id}
-              comment={reply}
-              currentUserId={currentUserId}
-              onReply={onReply}
-              onDelete={onDelete}
-              depth={depth + 1}
-            />
-          ))}
-        </div>
+      {isReportOpen && (
+        <ReportModal
+          isOpen={isReportOpen}
+          onClose={() => setIsReportOpen(false)}
+          onSubmit={(reason) => {
+            handleReportSubmit(reason);
+            setIsReportOpen(false);
+          }}
+        />
       )}
     </div>
   );

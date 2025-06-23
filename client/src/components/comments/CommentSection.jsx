@@ -39,6 +39,24 @@ const CommentSection = ({ blogId }) => {
         Comments
       </h3>
       <CommentForm onSubmit={(text) => handleAddComment(text)} />
+      <div className="mt-4 space-y-4">
+        {comments.length ? (
+          comments.map((comment, idx) => (
+            <CommentItem
+              key={idx}
+              comment={comment}
+              currentUserId={userInfo?.user?.id}
+              onReply={(parentCommentId, text) =>
+                handleAddComment(text, parentCommentId)
+              }
+              onDelete={handleDelete}
+              depth={0}
+            />
+          ))
+        ) : (
+          <p className="text-neutral-500">No comments yet</p>
+        )}
+      </div>
     </div>
   );
 };
