@@ -70,6 +70,12 @@ const userSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    savedBlogs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Blog",
+      },
+    ],
   },
   { timestamps: true }
 );

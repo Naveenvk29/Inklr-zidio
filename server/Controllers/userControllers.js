@@ -1,6 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import User from "../Models/userModel.js";
 import { uploadUserAvatar, deleteUserAvatar } from "../utils/Cloudinary.js";
+import Blog from "../Models/blogModel.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -312,6 +313,55 @@ const toggleFollowUser = asyncHandler(async (req, res) => {
   });
 });
 
+const toggleSaveBlog = asyncHandler(async (req, res) => {
+  const blogId = req.params.id;
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  const savedBlog = user.savedBlogs.includes(blogId);
+
+  if (savedBlog) {
+    user.savedBlogs = user.savedBlogs.filter((id) => id.toString() !== blogId);
+  } else {
+    user.savedBlogs.push(blogId);
+  }
+
+  await user.save();
+  res.status(200).json({
+    message: alreadySaved
+      ? "Blog removed from saved list."
+      : "Blog saved successfully.",
+    isSaved: !alreadySaved,
+  });
+});
+
+const fetchSavedBlogs = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).populate({
+    path: "savedBlogs",
+    populate: {
+      path: "author",
+      select: "userName fullName avatar",
+    },
+  });
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  res.status(200).json({
+    savedBlogs: user.savedBlogs,
+  });
+});
+
+const fetchBlogSaveCount = asyncHandler(async (req, res) => {
+  const blogId = req.params.id;
+
+  const saveCount = await User.countDocuments({
+    savedBlogs: blogId,
+  });
+
+  res.status(200).json({ blogId, saveCount });
+});
+
 export {
   registerUser,
   loginUser,
@@ -326,4 +376,7 @@ export {
   getFollowing,
   toggleFollowUser,
   changeCurrentUserPassword,
+  toggleSaveBlog,
+  fetchSavedBlogs,
+  fetchBlogSaveCount,
 };
