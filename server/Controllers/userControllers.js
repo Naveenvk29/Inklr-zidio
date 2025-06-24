@@ -260,7 +260,7 @@ const fetchUserById = asyncHandler(async (req, res) => {
 const getFollowers = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).populate(
     "followers",
-    "userName fullName avatar"
+    "userName fullName avatar email"
   );
   if (!user) return res.status(404).json({ message: "User not found" });
   res.status(200).json({ followers: user.followers });
@@ -269,7 +269,7 @@ const getFollowers = asyncHandler(async (req, res) => {
 const getFollowing = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).populate(
     "following",
-    "userName fullName avatar"
+    "userName fullName avatar email"
   );
   if (!user) return res.status(404).json({ message: "User not found" });
   res.status(200).json({ following: user.following });

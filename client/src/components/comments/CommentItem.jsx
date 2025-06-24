@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import CommentForm from "./CommentForm";
 import { useReportCommentMutation } from "../../redux/api/commentApi";
 import toast from "react-hot-toast";
 import ReportModal from "./ReportModal";
-import { Link } from "react-router-dom";
 
 const CommentItem = ({
   comment,
@@ -16,8 +16,10 @@ const CommentItem = ({
   const [showReplies, setShowReplies] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [reportComment] = useReportCommentMutation();
+  const navigate = useNavigate();
 
   const isOwnComment = currentUserId === comment.user._id;
+  const isUserLoggedIn = Boolean(currentUserId);
 
   const handleReportSubmit = async (reason) => {
     try {
@@ -25,13 +27,32 @@ const CommentItem = ({
       toast.success("Reported successfully");
     } catch (error) {
       const errorMessage = error?.data?.error || "Failed to report";
-
       if (errorMessage.toLowerCase().includes("already reported")) {
         toast.error("You have already reported this comment.");
       } else {
         toast.error(errorMessage);
       }
     }
+  };
+
+  const handleReplyClick = () => {
+    if (!isUserLoggedIn) {
+      navigate(
+        `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`,
+      );
+      return;
+    }
+    setIsReplying((prev) => !prev);
+  };
+
+  const handleReportClick = () => {
+    if (!isUserLoggedIn) {
+      navigate(
+        `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`,
+      );
+      return;
+    }
+    setIsReportOpen(true);
   };
 
   return (
@@ -54,6 +75,7 @@ const CommentItem = ({
               {comment.user.userName}
             </span>
           </Link>
+
           <div className="mt-1 flex items-center gap-4">
             <p className="text-md font-semibold dark:text-neutral-100">
               {comment.comment}
@@ -66,9 +88,9 @@ const CommentItem = ({
             </p>
           </div>
 
-          <div className="mt-2 flex gap-4 text-sm">
+          <div className="mt-2 flex flex-wrap gap-4 text-sm">
             <button
-              onClick={() => setIsReplying((prev) => !prev)}
+              onClick={handleReplyClick}
               className="text-blue-500 hover:underline"
             >
               {isReplying ? "Cancel" : "Reply"}
@@ -76,14 +98,14 @@ const CommentItem = ({
 
             {!isOwnComment && (
               <button
-                onClick={() => setIsReportOpen(true)}
+                onClick={handleReportClick}
                 className="text-red-500 hover:underline"
               >
                 Report
               </button>
             )}
 
-            {isOwnComment && (
+            {isOwnComment && isUserLoggedIn && (
               <button
                 onClick={() => onDelete(comment._id)}
                 className="text-red-600 hover:underline"
@@ -104,7 +126,7 @@ const CommentItem = ({
             )}
           </div>
 
-          {isReplying && (
+          {isReplying && isUserLoggedIn && (
             <div className="mt-3">
               <CommentForm
                 submitLabel="Reply"
