@@ -1,5 +1,6 @@
 import FollowButton from "../../../components/follow/FollowButton";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
   const {
     _id,
@@ -10,6 +11,8 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
     followers = [],
     following = [],
   } = profile;
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   return (
     <div className="mx-auto w-full max-w-4xl rounded-lg bg-neutral-50 shadow-md dark:bg-neutral-900">
@@ -45,10 +48,12 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
                 </>
               ) : (
                 <>
-                  <FollowButton
-                    id={_id}
-                    className="rounded bg-blue-500 px-4 py-2 text-white"
-                  />
+                  {userInfo?.user?.id !== profile._id && (
+                    <FollowButton
+                      id={_id}
+                      className="rounded bg-blue-500 px-4 py-2 text-white"
+                    />
+                  )}
 
                   <button className="rounded bg-blue-500 px-5 py-1 text-sm font-medium text-white">
                     Share Profile

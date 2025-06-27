@@ -330,10 +330,10 @@ const toggleSaveBlog = asyncHandler(async (req, res) => {
 
   await user.save();
   res.status(200).json({
-    message: alreadySaved
+    message: savedBlog
       ? "Blog removed from saved list."
       : "Blog saved successfully.",
-    isSaved: !alreadySaved,
+    isSaved: !savedBlog,
   });
 });
 

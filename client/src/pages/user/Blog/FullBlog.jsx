@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useFetchAllCommentsByBlogQuery } from "../../../redux/api/commentApi";
 import FollowButton from "../../../components/follow/FollowButton";
+import SaveButton from "../../../components/SaveButton";
 
 const FullBlog = () => {
   const { id } = useParams();
@@ -21,7 +22,6 @@ const FullBlog = () => {
   const [toggleLike] = useToggleLikeMutation();
   useEffect(() => {
     if (id) registerView(id);
-    console.log(id);
   }, [id, registerView]);
 
   const handleLike = async () => {
@@ -115,17 +115,22 @@ const FullBlog = () => {
           className="mb-6 max-h-[500px] w-full rounded-md object-cover"
         />
       )}
-      <div className="mb-6 flex gap-6 text-sm text-neutral-900 dark:text-neutral-100">
-        <button
-          onClick={handleLike}
-          className="cursor-pointer text-sm text-red-500"
-        >
-          {likes.length}
+      <div className="mb-6 flex justify-between text-sm text-neutral-900 dark:text-neutral-100">
+        <div className="flex gap-6">
+          <button
+            onClick={handleLike}
+            className="cursor-pointer text-sm text-red-500"
+          >
+            {likes.length}
 
-          {likes.map(String).includes(userInfo?.user?.id) ? "❤️" : "🤍"}
-        </button>
-        <span>💬 {comments.length} comments</span>
-        <span>👁️ {views} views</span>
+            {likes.map(String).includes(userInfo?.user?.id) ? "❤️" : "🤍"}
+          </button>
+          <span>💬 {comments.length} comments</span>
+          <span>👁️ {views} views</span>
+        </div>
+        <div>
+          <SaveButton blogId={id} />
+        </div>
       </div>
       <div
         className="prose prose-invert max-w-none text-lg leading-relaxed text-neutral-900 dark:text-neutral-200"

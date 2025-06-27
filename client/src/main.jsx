@@ -30,6 +30,7 @@ import EditBlog from "./pages/user/Blog/EditBlog.jsx";
 import Home from "./pages/home/Home.jsx";
 import Settings from "./pages/user/settings/setting.jsx";
 import Stats from "./pages/user/stats/Stats.jsx";
+import SavedBlogs from "./pages/user/Blog/SavedBlogs.jsx";
 import AdminPrivateRoute from "./pages/admin/AdminPrivateRoute.jsx";
 
 const router = createBrowserRouter(
@@ -48,6 +49,7 @@ const router = createBrowserRouter(
         <Route path="/edit-post/:id" element={<EditBlog />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/stats" element={<Stats />} />
+        <Route path="/saved" element={<SavedBlogs />} />
       </Route>
 
       <Route path="/admin" element={<AdminPrivateRoute />}></Route>

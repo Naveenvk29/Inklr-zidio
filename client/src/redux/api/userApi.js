@@ -94,6 +94,32 @@ const userApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    toggleSaveBlog: builder.mutation({
+      query: (blogId) => ({
+        url: `${USERS_URL}/blogs/${blogId}/toggle-save`,
+        method: "PUT",
+      }),
+      invalidatesTags: (result, error, blogId) => [
+        { type: "SavedBlogs", id: "LIST" },
+        { type: "SaveCount", id: blogId },
+      ],
+    }),
+
+    fetchSavedBlogs: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/me/saved-blogs`,
+      }),
+      providesTags: [{ type: "SavedBlogs", id: "LIST" }],
+    }),
+
+    fetchSaveCount: builder.query({
+      query: (blogId) => ({
+        url: `${USERS_URL}/blogs/${blogId}/save-count`,
+      }),
+      providesTags: (result, error, blogId) => [
+        { type: "SaveCount", id: blogId },
+      ],
+    }),
   }),
 });
 
@@ -111,4 +137,7 @@ export const {
   useGetFollowingsQuery,
   useToggleFollowMutation,
   useChangePasswordMutation,
+  useToggleSaveBlogMutation,
+  useFetchSaveCountQuery,
+  useFetchSavedBlogsQuery,
 } = userApi;
