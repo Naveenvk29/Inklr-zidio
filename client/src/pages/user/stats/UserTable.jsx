@@ -23,7 +23,7 @@ const UserTable = ({ users }) => {
               <td className="p-3">
                 <Link to={`/user-profile/${user._id}`}>
                   <img
-                    src={user.avatar.url}
+                    src={user.avatar?.url}
                     alt="avatar"
                     className="h-10 w-10 rounded-full object-cover"
                   />
@@ -34,7 +34,7 @@ const UserTable = ({ users }) => {
                   to={`/user-profile/${user._id}`}
                   className="hover:underline"
                 >
-                  {user.userName}
+                  {user?.userName}
                 </Link>
               </td>
               <td className="p-3 text-sm">

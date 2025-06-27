@@ -8,9 +8,11 @@ import {
   useGetMyBlogsQuery,
   useGetlikeofblogQuery,
 } from "../../../redux/api/blogApi";
+
 import StatsOverview from "./StatsOverview";
 import UserTable from "./UserTable";
 import BlogsTable from "./BlogsTable";
+import LikesModal from "./LikesModal";
 
 const Stats = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -31,18 +33,19 @@ const Stats = () => {
   const { data: blogLikes } = useGetlikeofblogQuery(selectedBlogId, {
     skip: !selectedBlogId,
   });
+  console.log(blogLikes);
 
   const notFollowingBack = followers.filter(
     (f) => !followings.some((follow) => follow._id === f._id),
   );
 
   const openLikesModal = (blogId) => {
-    selectedBlogId(blogId);
+    setSelectedBlogId(blogId);
     setShowLikesModal(true);
   };
 
   const closeLikesModal = () => {
-    selectedBlogId(null);
+    setSelectedBlogId(null);
     setShowLikesModal(false);
   };
   const getUserList = () =>
@@ -53,7 +56,7 @@ const Stats = () => {
         : notFollowingBack;
 
   return (
-    <div className="mx-auto mt-12 max-w-6xl rounded bg-neutral-100 p-6 text-neutral-800 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] dark:bg-neutral-800 dark:text-neutral-200">
+    <div className="mx-auto mt-12 max-w-6xl rounded-2xl bg-neutral-100 p-6 text-neutral-800 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] dark:bg-neutral-800 dark:text-neutral-200">
       <h2 className="mb-4 text-2xl font-bold tracking-tight capitalize">
         {userInfo.user.userName} Stats
       </h2>
@@ -87,9 +90,13 @@ const Stats = () => {
       <UserTable users={getUserList()} />
 
       <div className="mt-10">
-        <h3 className="mb-3 text-xl font-bold tracking-tight">Your Blogs</h3>
         <BlogsTable blogs={myBlogs} onOpenLikes={openLikesModal} />
       </div>
+      <LikesModal
+        show={showLikesModal}
+        onClose={closeLikesModal}
+        likedBy={blogLikes?.likedBy}
+      />
     </div>
   );
 };
