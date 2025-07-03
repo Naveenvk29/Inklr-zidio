@@ -7,6 +7,9 @@ import {
   toggleHideCommentByAdmin,
   toggleBanUserByAdmin,
   fetchBanUserbyAdmin,
+  deleteBlogByAdmin,
+  clearCommentReports,
+  deletecommentAndReplies,
 } from "../Controllers/adminController.js";
 
 import {
@@ -51,4 +54,19 @@ router.patch(
   toggleHideCommentByAdmin
 );
 
+router.delete("/blogs/:id", authenticate, authorizedAsAdmin, deleteBlogByAdmin);
+
+router.delete(
+  "/comments/:id",
+  authenticate,
+  authorizedAsAdmin,
+  deletecommentAndReplies
+);
+
+router.patch(
+  "/comments/:id/clear-reports",
+  authenticate,
+  authorizedAsAdmin,
+  clearCommentReports
+);
 export default router;
