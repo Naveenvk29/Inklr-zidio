@@ -49,6 +49,30 @@ export const adminApi = apiSlice.injectEndpoints({
     fetchAdminStats: builder.query({
       query: () => `${ADMIN_URL}/stats`,
     }),
+    deleteBlogByAdmin: builder.mutation({
+      query: (id) => {
+        return {
+          url: `${ADMIN_URL}/blogs/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
+    deletecommentAndReplies: builder.mutation({
+      query: (id) => {
+        return {
+          url: `${ADMIN_URL}/comments/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
+    clearCommentReports: builder.mutation({
+      query: (id) => {
+        return {
+          url: `${ADMIN_URL}/comments/${id}/clear-reports`,
+          method: "PATCH",
+        };
+      },
+    }),
   }),
 });
 
@@ -60,4 +84,7 @@ export const {
   useModifyUserRoleMutation,
   useFetchBannedUsersQuery,
   useFetchAdminStatsQuery,
+  useDeleteBlogByAdminMutation,
+  useDeletecommentAndRepliesMutation,
+  useClearCommentReportsMutation,
 } = adminApi;

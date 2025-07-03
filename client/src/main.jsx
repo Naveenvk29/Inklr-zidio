@@ -31,7 +31,10 @@ import Home from "./pages/home/Home.jsx";
 import Settings from "./pages/user/settings/setting.jsx";
 import Stats from "./pages/user/stats/Stats.jsx";
 import SavedBlogs from "./pages/user/Blog/SavedBlogs.jsx";
+
+//
 import AdminPrivateRoute from "./pages/admin/AdminPrivateRoute.jsx";
+import Dashboard from "./pages/admin/Dashboard/Dashboard.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
@@ -52,7 +55,9 @@ const router = createBrowserRouter(
         <Route path="/saved" element={<SavedBlogs />} />
       </Route>
 
-      <Route path="/admin" element={<AdminPrivateRoute />}></Route>
+      <Route path="/admin" element={<AdminPrivateRoute />}>
+        <Route path="dashboard" element={<Dashboard />} />
+      </Route>
     </Route>,
   ),
 );
