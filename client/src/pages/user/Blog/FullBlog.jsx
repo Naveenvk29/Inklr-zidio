@@ -86,7 +86,7 @@ const FullBlog = () => {
             Edit
           </Link>
         )}
-        {author._id !== userInfo?.user?.id && (
+        {userInfo && author._id !== userInfo?.user?.id && (
           <FollowButton
             id={author._id}
             className="rounded bg-blue-500 px-2 py-1 text-white"
@@ -94,7 +94,9 @@ const FullBlog = () => {
         )}
       </div>
 
-      <p className="text-lg font-semibold">{description}</p>
+      <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-200">
+        {description}
+      </p>
 
       {blog.tags?.length > 0 && (
         <div className="my-5 flex flex-wrap gap-2">
@@ -103,7 +105,7 @@ const FullBlog = () => {
               key={i}
               className="rounded bg-gray-700 px-3 py-1 text-sm text-gray-200 dark:bg-neutral-100 dark:text-neutral-800"
             >
-              #{tag.toString()}
+              # {tag.toString()}
             </span>
           ))}
         </div>

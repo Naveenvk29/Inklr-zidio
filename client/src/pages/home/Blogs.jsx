@@ -36,7 +36,7 @@ const Blogs = () => {
           placeholder="Search blog titles..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-xl border px-4 py-2 md:w-1/2"
+          className="w-full rounded-xl border border-neutral-300 px-4 py-2 focus:border-indigo-500 focus:ring-indigo-500 md:w-3/4 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
         />
       </div>
 
@@ -57,8 +57,8 @@ const Blogs = () => {
             key={category._id}
             className={`rounded-lg border px-4 py-2 ${
               selectedCategory === category._id
-                ? "bg-black text-white"
-                : "bg-white text-neutral-900"
+                ? "bg-black text-white dark:bg-neutral-700 dark:text-white"
+                : "bg-white text-neutral-900 dark:bg-neutral-800 dark:text-white"
             }`}
             onClick={() => setSelectedCategory(category._id)}
           >
@@ -77,23 +77,25 @@ const Blogs = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="rounded border bg-white p-4 shadow"
+              className="rounded border bg-white p-4 shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
             >
               <img
                 src={blog.blogImage?.url}
                 alt={blog.title}
                 className="h-40 w-full rounded object-cover"
               />
-              <h2 className="mt-4 text-xl font-semibold">{blog.title}</h2>
+              <h2 className="mt-4 text-xl font-semibold text-neutral-950 dark:text-neutral-200">
+                {blog.title}
+              </h2>
               <p className="mt-1 text-sm text-gray-500">
-                By{" "}
-                <span className="font-medium">
+                By{"  "}
+                <span className="font-medium text-black dark:text-neutral-200">
                   {blog.author?.userName || "Unknown"}
                 </span>{" "}
                 · {new Date(blog.createdAt).toLocaleDateString()} ·{" "}
                 <span className="italic">{blog.category?.name}</span>
               </p>
-              <p className="mt-2 line-clamp-3 text-gray-600">
+              <p className="mt-2 line-clamp-3 text-neutral-500">
                 {blog.description}
               </p>
               <Link

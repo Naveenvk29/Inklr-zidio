@@ -18,6 +18,7 @@ import {
 import Login from "./pages/auth/Login.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import CompleteProfile from "./pages/auth/CompleteProfile.jsx";
+import Explore from "./pages/home/Explore.jsx";
 
 //
 import UserPriviteRoutes from "./pages/user/UserPriviteRoutes.jsx";
@@ -44,6 +45,7 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<SignUp />} />
       <Route path="/complete-profile" element={<CompleteProfile />} />
       <Route path="/blog/:id" element={<FullBlog />} />
+      <Route path="/explore" element={<Explore />} />
 
       <Route path="" element={<UserPriviteRoutes />}>
         <Route path="/my-profile" element={<MyProfile />} />

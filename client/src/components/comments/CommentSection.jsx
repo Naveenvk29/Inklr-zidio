@@ -38,7 +38,7 @@ const CommentSection = ({ blogId }) => {
       <h3 className="mb-4 text-xl font-extrabold text-neutral-950 dark:text-neutral-100">
         Comments
       </h3>
-      <CommentForm onSubmit={(text) => handleAddComment(text)} />
+      {userInfo && <CommentForm onSubmit={(text) => handleAddComment(text)} />}
       <div className="mt-4 space-y-4">
         {comments.length ? (
           comments.map((comment, idx) => (

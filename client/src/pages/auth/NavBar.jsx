@@ -71,8 +71,8 @@ const NavBar = () => {
   });
 
   return (
-    <div className="sticky inset-x-0 top-2 z-[100] w-full bg-transparent">
-      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-2">
+    <div className="sticky inset-x-0 z-[100] w-full bg-transparent">
+      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-2 backdrop-blur-md">
         <Link
           to="/"
           className="text-2xl font-bold tracking-tight text-neutral-800 dark:text-neutral-300"

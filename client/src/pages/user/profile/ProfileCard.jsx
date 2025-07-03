@@ -37,7 +37,7 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
               {isOwnProfile ? (
                 <>
                   <Link
-                    to="/edit-profile"
+                    to="/settings"
                     className="rounded bg-blue-500 px-5 py-1 text-sm font-medium text-white"
                   >
                     Edit Profile
