@@ -6,7 +6,7 @@ const Hero = () => {
 
   return (
     <div className="h-[40vh] bg-gradient-to-r px-6 py-12 text-center">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-3xl">
         <h1 className="mb-4 text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl dark:text-neutral-100">
           🌑 Inklr –{" "}
           <span className="text-indigo-600">Where Words Make a Mark</span>
