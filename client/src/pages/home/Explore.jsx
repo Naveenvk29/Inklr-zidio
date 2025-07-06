@@ -5,7 +5,7 @@ const Explore = () => {
   return (
     <div>
       <h1 className="my-6 text-center text-2xl font-bold text-neutral-950 dark:text-neutral-200">
-        Explore Blogs
+        Blogs
       </h1>
       <Blogs />
     </div>

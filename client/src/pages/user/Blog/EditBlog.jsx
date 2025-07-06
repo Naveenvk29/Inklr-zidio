@@ -9,6 +9,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate, useParams } from "react-router-dom";
 import { XCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -171,11 +172,17 @@ const EditBlog = () => {
           <option value="private">Private</option>
         </select>
 
-        <textarea
+        {/* <textarea
           placeholder="Main Content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="h-40 w-full rounded border px-4 py-2"
+        /> */}
+
+        <RichTextEditor
+          value={content}
+          onChange={(value) => setContent(value)}
+          className=""
         />
 
         <div className="flex items-center justify-between">

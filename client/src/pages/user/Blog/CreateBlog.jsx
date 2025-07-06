@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import { XCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import RichTextEditor from "../../../components/RichTextEditor";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
@@ -138,32 +139,33 @@ const CreateBlog = () => {
           className="w-full rounded border px-4 py-2 text-neutral-900 dark:text-neutral-100"
         />
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full rounded border px-4 py-2 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
-        >
-          <option value="">Select Category</option>
-          {categories?.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={visibility}
-          onChange={(e) => setVisibility(e.target.value)}
-          className="w-full rounded border px-4 py-2 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
-        >
-          <option value="everyone">Everyone</option>
-          <option value="me">Me</option>
-        </select>
+        <div className="flex flex-col gap-5 md:flex-row">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full rounded border px-4 py-2 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+          >
+            <option value="">Select Category</option>
+            {categories?.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={visibility}
+            onChange={(e) => setVisibility(e.target.value)}
+            className="w-full rounded border px-4 py-2 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+          >
+            <option value="everyone">Everyone</option>
+            <option value="me">Me</option>
+          </select>
+        </div>
 
-        <textarea
-          placeholder="Main Content"
+        <RichTextEditor
           value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="h-40 w-full rounded border px-4 py-2 text-neutral-900 dark:text-neutral-100"
+          onChange={(value) => setContent(value)}
+          className=""
         />
 
         <button
