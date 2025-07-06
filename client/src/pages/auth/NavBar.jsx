@@ -178,6 +178,12 @@ const NavBar = () => {
           {userInfo && (
             <div className="flex items-center justify-center gap-4">
               <Link
+                to={"/explore"}
+                className="cursor-pointer text-neutral-600 dark:text-neutral-300"
+              >
+                Blogs
+              </Link>
+              <Link
                 to={"/create-blog"}
                 className="flex items-center space-x-1 text-sm"
               >

@@ -26,6 +26,7 @@
     "@tiptap/react": "^2.24.2",
     "@tiptap/starter-kit": "^2.24.2",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.513.0",
     "motion": "^12.23.0",
     "react": "^19.1.0",
