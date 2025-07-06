@@ -1,7 +1,8 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import User from "../Models/userModel.js";
 import { uploadUserAvatar, deleteUserAvatar } from "../utils/Cloudinary.js";
-import Blog from "../Models/blogModel.js";
+import crypto from "crypto";
+import { sendEmail } from "../libs/sendEmail.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -362,6 +363,97 @@ const fetchBlogSaveCount = asyncHandler(async (req, res) => {
   res.status(200).json({ blogId, saveCount });
 });
 
+const oAuthLogin = asyncHandler(async (req, res) => {});
+
+const forgetPassword = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.resetPasswordToken = crypto.randomBytes(32).toString("hex");
+  user.resetPasswordExpires = Date.now() + 5 * 60 * 1000;
+  await user.save();
+
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${user.resetPasswordToken}`;
+  console.log(resetUrl);
+
+  const subject = "Reset Your Password";
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2>Hello ${user.userName || "there"},</h2>
+      <p>We received a request to reset your password. Click the button below to choose a new one:</p>
+
+      <a href="${resetUrl}" 
+         style="display: inline-block; margin: 20px 0; padding: 12px 20px; background-color: #4f46e5; color: white; text-decoration: none; border-radius: 5px;">
+         Reset Password
+      </a>
+
+      <p>If the button doesn't work, copy and paste this URL into your browser:</p>
+      <p><a href="${resetUrl}" style="color: #4f46e5;">${resetUrl}</a></p>
+
+      <p><strong>Note:</strong> This link will expire in 5 minutes for your security.</p>
+
+      <p>If you didn’t request this, please ignore this email.</p>
+
+      <p>Thanks,<br/>The ${process.env.APP_NAME || "Support"} Team</p>
+    </div>
+  `;
+
+  const text = `
+Hello ${user.userName || "there"},
+
+We received a request to reset your password.
+
+Reset it here: ${resetUrl}
+
+This link will expire in 5 minutes.
+
+If you did not request this, you can ignore this email.
+
+Thanks,  
+The ${process.env.APP_NAME || "Support"} Team
+`;
+
+  await sendEmail(user.email, subject, html, text);
+
+  res.status(200).json({
+    message: "Password reset link sent to your email",
+  });
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({
+      message: "Token and new password are required",
+    });
+  }
+
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      message: "Invalid or expired password reset token",
+    });
+  }
+
+  user.password = newPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    message: "Password has been reset successfully",
+  });
+});
+
 export {
   registerUser,
   loginUser,
@@ -379,4 +471,7 @@ export {
   toggleSaveBlog,
   fetchSavedBlogs,
   fetchBlogSaveCount,
+  forgetPassword,
+  resetPassword,
+  oAuthLogin,
 };

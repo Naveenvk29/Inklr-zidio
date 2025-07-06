@@ -16,6 +16,9 @@ import {
   toggleSaveBlog,
   fetchSavedBlogs,
   fetchBlogSaveCount,
+  forgetPassword,
+  resetPassword,
+  oAuthLogin,
 } from "../Controllers/userControllers.js";
 import { authenticate } from "../Middleware/authMiddleware.js";
 import { upload } from "../Middleware/multerMiddleware.js";
@@ -46,6 +49,8 @@ router
 router.route("/").get(fetchAllUsers);
 router.route("/:id").get(fetchUserById);
 
+router.post("/oauth-login", oAuthLogin);
+
 // Follow/Unfollow routes
 
 router.put("/toggle-follow/:id", authenticate, toggleFollowUser);
@@ -58,5 +63,9 @@ router.get("/:id/following", authenticate, getFollowing);
 router.get("/me/saved-blogs", authenticate, fetchSavedBlogs);
 router.put("/blogs/:id/toggle-save", authenticate, toggleSaveBlog);
 router.get("/blogs/:id/save-count", authenticate, fetchBlogSaveCount);
+
+//
+router.post("/forget-password", forgetPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;

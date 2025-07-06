@@ -76,6 +76,8 @@ const userSchema = new mongoose.Schema(
         ref: "Blog",
       },
     ],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
   },
   { timestamps: true }
 );
