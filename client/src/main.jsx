@@ -36,6 +36,8 @@ import SavedBlogs from "./pages/user/Blog/SavedBlogs.jsx";
 //
 import AdminPrivateRoute from "./pages/admin/AdminPrivateRoute.jsx";
 import Dashboard from "./pages/admin/Dashboard/Dashboard.jsx";
+import ForgotPassword from "./pages/auth/Forgetpassword.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromChildren(
@@ -46,6 +48,8 @@ const router = createBrowserRouter(
       <Route path="/complete-profile" element={<CompleteProfile />} />
       <Route path="/blog/:id" element={<FullBlog />} />
       <Route path="/explore" element={<Explore />} />
+      <Route path="/send-mail" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="" element={<UserPriviteRoutes />}>
         <Route path="/my-profile" element={<MyProfile />} />

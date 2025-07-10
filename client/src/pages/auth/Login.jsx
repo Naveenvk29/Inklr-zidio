@@ -126,7 +126,10 @@ const Login = () => {
                 />
                 Remember me
               </label>
-              <Link to={""} className="text-sm font-medium hover:underline">
+              <Link
+                to={"/send-mail"}
+                className="text-sm font-medium hover:underline"
+              >
                 Forget password
               </Link>
             </div>
