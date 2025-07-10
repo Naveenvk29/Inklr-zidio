@@ -120,6 +120,30 @@ const userApi = apiSlice.injectEndpoints({
         { type: "SaveCount", id: blogId },
       ],
     }),
+    forgetPassword: builder.mutation({
+      query: (userData) => ({
+        url: `${USERS_URL}/forget-password`,
+        method: "POST",
+        body: userData,
+        credentials: "include",
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: (userData) => ({
+        url: `${USERS_URL}/reset-password`,
+        method: "POST",
+        body: userData,
+        credentials: "include",
+      }),
+    }),
+    oauthLoginUser: builder.mutation({
+      query: (userdata) => ({
+        url: `${USERS_URL}/oauth-login`,
+        method: "post",
+        body: userdata,
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -140,4 +164,7 @@ export const {
   useToggleSaveBlogMutation,
   useFetchSaveCountQuery,
   useFetchSavedBlogsQuery,
+  useForgetPasswordMutation,
+  useResetPasswordMutation,
+  useOauthLoginUserMutation,
 } = userApi;

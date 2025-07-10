@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { useLoginMutation } from "../../redux/api/userApi";
+import {
+  useLoginMutation,
+  useOauthLoginUserMutation,
+} from "../../redux/api/userApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../redux/features/authSlice";
 import { Loader, Mail, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { googleProvider, githubProvider, auth } from "../../libs/firebase";
+import { signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
+  const [oauthLoginUser] = useOauthLoginUserMutation();
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +33,32 @@ const Login = () => {
       navigate("/");
     } catch (err) {
       toast.error(err?.data?.message || "Login failed");
+    }
+  };
+
+  const googleHandle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseIdToken = await result.user.getIdToken();
+      const res = await oauthLoginUser({ firebaseIdToken }).unwrap();
+      dispatch(setCredentials(res));
+      navigate("/my-profile");
+    } catch (error) {
+      console.log(error);
+      toast.error("Google login failed");
+    }
+  };
+
+  const githubHandle = async () => {
+    try {
+      const result = await signInWithPopup(auth, githubProvider);
+      const firebaseIdToken = await result.user.getIdToken();
+      const res = await oauthLoginUser({ firebaseIdToken }).unwrap();
+      dispatch(setCredentials(res));
+      navigate("/my-profile");
+    } catch (error) {
+      console.log(error);
+      toast.error("GitHub login failed");
     }
   };
 
@@ -129,10 +161,16 @@ const Login = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-3">
-          <button className="w-full rounded-2xl bg-red-500 px-4 py-2 text-white">
+          <button
+            onClick={googleHandle}
+            className="w-full rounded-2xl bg-red-500 px-4 py-2 text-white"
+          >
             Google
           </button>
-          <button className="w-full rounded-2xl bg-neutral-900 px-4 py-2 text-white">
+          <button
+            onClick={githubProvider}
+            className="w-full rounded-2xl bg-neutral-900 px-4 py-2 text-white"
+          >
             GitHub
           </button>
         </div>
