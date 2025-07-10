@@ -3,6 +3,7 @@ import User from "../Models/userModel.js";
 import { uploadUserAvatar, deleteUserAvatar } from "../utils/Cloudinary.js";
 import crypto from "crypto";
 import { sendEmail } from "../libs/sendEmail.js";
+import admin from "../libs/firebaseAdmin.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -363,7 +364,73 @@ const fetchBlogSaveCount = asyncHandler(async (req, res) => {
   res.status(200).json({ blogId, saveCount });
 });
 
-const oAuthLogin = asyncHandler(async (req, res) => {});
+const oAuthLogin = asyncHandler(async (req, res) => {
+  const { firebaseIdToken } = req.body;
+
+  if (!firebaseIdToken) {
+    return res.status(400).json({ message: "Firebase ID token is missing" });
+  }
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(firebaseIdToken);
+    const { email, name, picture, uid } = decodedToken;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email not found in token." });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Split full name from Firebase into first and last
+      const nameParts = name?.split(" ") || [];
+      const firstName = nameParts[0] || "User";
+      const lastName = nameParts.slice(1).join(" ") || "Account";
+
+      user = new User({
+        fullName: {
+          firstName,
+          lastName,
+        },
+        email,
+        password: crypto.randomBytes(20).toString("hex"), // dummy password
+        avatar: picture ? { url: picture } : undefined,
+      });
+
+      await user.save();
+    }
+
+    // Generate token
+    const token = user.generateAuthToken(user._id);
+
+    res.cookie("jwt", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV !== "development",
+    });
+
+    res.status(200).json({
+      message: "OAuth login successful",
+      user: {
+        id: user._id,
+        userName: user.userName,
+        fullName: user.fullName,
+        email: user.email,
+        avatar: user.avatar,
+        bio: user.bio,
+        role: user.role,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("🔥 Google OAuth Error:", error);
+    res.status(500).json({
+      message: "Google login failed",
+      error: error.message,
+    });
+  }
+});
 
 const forgetPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
@@ -376,7 +443,6 @@ const forgetPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${user.resetPasswordToken}`;
-  console.log(resetUrl);
 
   const subject = "Reset Your Password";
 

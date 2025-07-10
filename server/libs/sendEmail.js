@@ -9,7 +9,8 @@ export const sendEmail = async (toString, subject, html) => {
   });
   await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: subject,
-    html: html,
+    to: toString,
+    subject,
+    html,
   });
 };
