@@ -4,7 +4,8 @@ import {
 } from "../redux/api/userApi";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { Bookmark, BookmarkIcon } from "lucide-react";
+import { Bookmark } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const SaveButton = ({ blogId }) => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -16,6 +17,7 @@ const SaveButton = ({ blogId }) => {
       skip: !userInfo,
     },
   );
+
   const savedBlogs = Array.isArray(savedBlogsData?.savedBlogs)
     ? savedBlogsData.savedBlogs
     : [];
@@ -42,17 +44,30 @@ const SaveButton = ({ blogId }) => {
   if (!userInfo) return null;
 
   return (
-    <button
+    <motion.button
       onClick={handleToggleSave}
       title={saved ? "Unsave this blog" : "Save this blog"}
       disabled={isToggling}
+      whileTap={{ scale: 1.4 }}
+      className="transition-colors duration-200"
     >
-      {saved ? (
-        <Bookmark fill="currentColor" className="text-primary" />
-      ) : (
-        <Bookmark />
-      )}
-    </button>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={saved ? "saved" : "unsaved"}
+          initial={{ scale: 0.7, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.7, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          <Bookmark
+            className={`h-6 w-6 ${
+              saved ? "fill-current text-blue-600" : "text-gray-500"
+            }`}
+            fill={saved ? "currentColor" : "none"}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </motion.button>
   );
 };
 

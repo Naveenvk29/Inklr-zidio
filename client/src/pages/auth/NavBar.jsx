@@ -20,7 +20,6 @@ const NavItem = [
   { name: "My Profile", link: "/my-profile" },
   { name: "Stats", link: "/stats" },
   { name: "Save for later", link: "/saved" },
-  { name: "Apply for verification", link: "/verify" },
   { name: "Settings", link: "/settings" },
 ];
 
@@ -280,7 +279,10 @@ const NavBar = () => {
               </AnimatePresence>
             ) : (
               <div className="flex gap-2">
-                <Link className="rounded-full bg-neutral-300 px-4 py-1 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-100">
+                <Link
+                  to={"/signup"}
+                  className="rounded-full bg-neutral-300 px-4 py-1 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-100"
+                >
                   start Writing
                 </Link>
                 <Link

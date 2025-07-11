@@ -9,6 +9,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate, useParams } from "react-router-dom";
 import { XCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { motion } from "motion/react";
 import RichTextEditor from "../../../components/RichTextEditor";
 
 const EditBlog = () => {
@@ -92,23 +93,47 @@ const EditBlog = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (confirm("Are you sure you want to delete this blog?")) {
+      try {
+        await deleteBlog(id).unwrap();
+        toast.success("Blog deleted successfully.");
+        navigate("/my-profile");
+      } catch (err) {
+        toast.error("Failed to delete blog.");
+      }
+    }
+  };
+
   if (isFetchingBlogs) return <p>Loading blog...</p>;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 text-neutral-900 dark:text-neutral-200">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="mx-auto max-w-3xl px-4 py-8 text-neutral-900 dark:text-neutral-200"
+    >
       <h2 className="mb-4 text-2xl font-bold">Edit Blog</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div
+        <motion.div
           {...getRootProps()}
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1 }}
           className={`cursor-pointer rounded border-2 border-dashed px-4 py-6 text-center ${
             isDragActive
-              ? "bg-gray-100 text-neutral-900 dark:bg-neutral-800 dark:text-white"
-              : "bg-gray-100 text-neutral-900 dark:bg-neutral-800 dark:text-white"
+              ? "bg-gray-100 dark:bg-neutral-800"
+              : "bg-gray-100 dark:bg-neutral-800"
           }`}
         >
           <input {...getInputProps()} />
           {previewBlog ? (
-            <div className="relative">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative"
+            >
               <img
                 src={previewBlog}
                 alt="Preview"
@@ -124,11 +149,12 @@ const EditBlog = () => {
               >
                 <XCircle size={20} />
               </button>
-            </div>
+            </motion.div>
           ) : (
             <p>Drag & drop an image, or click to select</p>
           )}
-        </div>
+        </motion.div>
+
         <input
           type="text"
           placeholder="Blog Title"
@@ -142,7 +168,6 @@ const EditBlog = () => {
           onChange={(e) => setDescription(e.target.value)}
           className="w-full rounded border px-4 py-2"
         />
-
         <input
           type="text"
           placeholder="Tags (comma separated)"
@@ -162,7 +187,6 @@ const EditBlog = () => {
             </option>
           ))}
         </select>
-
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value)}
@@ -172,49 +196,35 @@ const EditBlog = () => {
           <option value="private">Private</option>
         </select>
 
-        {/* <textarea
-          placeholder="Main Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="h-40 w-full rounded border px-4 py-2"
-        /> */}
-
         <RichTextEditor
           value={content}
           onChange={(value) => setContent(value)}
-          className=""
         />
 
         <div className="flex items-center justify-between">
-          <button
+          <motion.button
             type="submit"
             disabled={isUpdating}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
           >
             {isUpdating ? "Updating..." : "Update Blog"}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             type="button"
-            onClick={async () => {
-              if (confirm("Are you sure you want to delete this blog?")) {
-                try {
-                  await deleteBlog(id).unwrap();
-                  toast.success("Blog deleted successfully.");
-                  navigate("/my-profile");
-                } catch (err) {
-                  toast.error("Failed to delete blog.");
-                }
-              }
-            }}
+            onClick={handleDelete}
             disabled={isDeleting}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="rounded border px-4 py-2 text-red-500 hover:bg-red-50"
           >
             {isDeleting ? "Deleting..." : "Delete Blog"}
-          </button>
+          </motion.button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

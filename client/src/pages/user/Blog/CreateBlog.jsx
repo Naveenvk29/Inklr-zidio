@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import { XCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { motion } from "motion/react";
 import RichTextEditor from "../../../components/RichTextEditor";
 
 const CreateBlog = () => {
@@ -26,6 +27,9 @@ const CreateBlog = () => {
     multiple: false,
     onDropAccepted: (files) => {
       const file = files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        return toast.error("Image must be under 5MB.");
+      }
       setBlogImage(file);
 
       const reader = new FileReader();
@@ -33,25 +37,25 @@ const CreateBlog = () => {
       reader.readAsDataURL(file);
     },
     onDropRejected: (fileRejections) => {
-      alert(
-        `File rejected: ${fileRejections[0].errors[0].message}. Only JPG/PNG/WebP allowed.`,
-      );
+      const error = fileRejections[0]?.errors[0]?.message;
+      toast.error(`File rejected: ${error || "Unsupported format"}`);
     },
   });
+
+  const parseTags = (input) =>
+    input
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+
+  const isFormValid = title && category && description && content && blogImage;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim()) return toast.error("Title is required.");
-    if (!category) return toast.error("Category is required.");
-    if (!description.trim()) return toast.error("Description is required.");
-    if (!content.trim()) return toast.error("Content is required.");
-    if (!blogImage) return toast.error("Image is required.");
+    if (!isFormValid) return toast.error("Please fill all required fields.");
 
-    const tags = tagsInput
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean);
+    const tags = parseTags(tagsInput);
 
     const formData = new FormData();
     formData.append("title", title);
@@ -80,14 +84,22 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="mx-auto max-w-3xl px-4 py-8"
+    >
       <h2 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-neutral-200">
         Create New Blog
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div
+        <motion.div
           {...getRootProps()}
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1 }}
           className={`cursor-pointer rounded border-2 border-dashed px-4 py-6 text-center ${
             isDragActive
               ? "bg-gray-100 text-neutral-900 dark:bg-neutral-800 dark:text-white"
@@ -96,7 +108,12 @@ const CreateBlog = () => {
         >
           <input {...getInputProps()} />
           {previewBlog ? (
-            <div className="relative">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="relative"
+            >
               <img
                 src={previewBlog}
                 alt="Preview"
@@ -112,25 +129,27 @@ const CreateBlog = () => {
               >
                 <XCircle size={20} />
               </button>
-            </div>
+            </motion.div>
           ) : (
             <p>Drag & drop an image, or click to select</p>
           )}
-        </div>
+        </motion.div>
+
         <input
           type="text"
+          aria-label="Blog Title"
           placeholder="Blog Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full rounded border px-4 py-2 text-neutral-900 dark:text-neutral-100"
         />
         <textarea
+          aria-label="Short Description"
           placeholder="Short Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full rounded border px-4 py-2 text-neutral-900 dark:text-neutral-100"
         />
-
         <input
           type="text"
           placeholder="Tags (comma separated)"
@@ -146,11 +165,15 @@ const CreateBlog = () => {
             className="w-full rounded border px-4 py-2 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
           >
             <option value="">Select Category</option>
-            {categories?.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
-              </option>
-            ))}
+            {categories?.length ? (
+              categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))
+            ) : (
+              <option disabled>Loading categories...</option>
+            )}
           </select>
           <select
             value={visibility}
@@ -165,18 +188,23 @@ const CreateBlog = () => {
         <RichTextEditor
           value={content}
           onChange={(value) => setContent(value)}
-          className=""
         />
 
-        <button
+        <motion.button
           type="submit"
-          disabled={isLoading}
-          className="rounded bg-blue-600 px-6 py-2 font-semibold text-white hover:bg-blue-700"
+          disabled={isLoading || !isFormValid}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`rounded px-6 py-2 font-semibold text-white ${
+            isFormValid
+              ? "bg-blue-600 hover:bg-blue-700"
+              : "cursor-not-allowed bg-gray-400"
+          }`}
         >
           {isLoading ? "Creating..." : "Create Blog"}
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

@@ -2,6 +2,8 @@ import ProfileCard from "./ProfileCard";
 import Blogs from "./Blogs";
 import { useGetCurrentProfileQuery } from "../../../redux/api/userApi";
 import { useGetMyBlogsQuery } from "../../../redux/api/blogApi";
+import { motion } from "framer-motion";
+
 const MyProfile = () => {
   const {
     data: profile,
@@ -32,10 +34,16 @@ const MyProfile = () => {
   }
 
   return (
-    <div className="mt-10 w-full">
+    <motion.div
+      className="mt-10 w-full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
       <ProfileCard profile={profile} blog={blogs} isOwnProfile={true} />
+
       <Blogs blogs={blogs} />
-    </div>
+    </motion.div>
   );
 };
 

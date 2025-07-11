@@ -3,6 +3,7 @@ import SaveButton from "../../../components/SaveButton";
 import { useFetchSavedBlogsQuery } from "../../../redux/api/userApi";
 import { useSelector } from "react-redux";
 import { useFetchAllCommentsByBlogQuery } from "../../../redux/api/commentApi";
+import { motion } from "motion/react";
 
 const SavedBlogs = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -28,16 +29,19 @@ const SavedBlogs = () => {
   const commentsByBlogId = comments.reduce((acc, comment) => {
     const blogId = comment.blog?._id || comment.blog;
     if (!acc[blogId]) acc[blogId] = { comments: 0, replies: 0 };
-
     acc[blogId].comments += 1;
     acc[blogId].replies += Array.isArray(comment.replies)
       ? comment.replies.length
       : 0;
-
     return acc;
   }, {});
+
   if (isLoading)
-    return <p className="text-center text-lg">Loading saved blogs...</p>;
+    return (
+      <p className="text-center text-lg text-gray-600 dark:text-gray-300">
+        Loading saved blogs...
+      </p>
+    );
 
   if (isError)
     return (
@@ -58,10 +62,14 @@ const SavedBlogs = () => {
       </h2>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {savedBlogs.map((blog) => (
-          <div
+        {savedBlogs.map((blog, index) => (
+          <motion.div
             key={blog._id}
-            className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition hover:shadow-md dark:border-neutral-700 dark:bg-neutral-900"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.4 }}
+            whileHover={{ scale: 1.05 }}
+            className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition dark:border-neutral-700 dark:bg-neutral-900"
           >
             <img
               src={blog.blogImage?.url || "/default-blog.jpg"}
@@ -104,11 +112,11 @@ const SavedBlogs = () => {
 
             <Link
               to={`/blog/${blog._id}`}
-              className="mt-3 text-indigo-500 hover:underline"
+              className="mt-3 inline-block text-indigo-500 hover:underline"
             >
               Read More →
             </Link>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

@@ -1,6 +1,9 @@
 import FollowButton from "../../../components/follow/FollowButton";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { motion } from "motion/react";
+import CountUp from "react-countup";
+
 const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
   const {
     _id,
@@ -15,15 +18,25 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
   const { userInfo } = useSelector((state) => state.auth);
 
   return (
-    <div className="mx-auto w-full max-w-4xl rounded-lg bg-neutral-50 shadow-md dark:bg-neutral-900">
+    <motion.div
+      className="mx-auto w-full max-w-4xl rounded-lg bg-neutral-50 shadow-md dark:bg-neutral-900"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex flex-col items-center gap-6 p-5 md:flex-row md:items-start md:justify-between">
-        <div className="shrink-0">
+        <motion.div
+          className="shrink-0"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
           <img
             src={avatar?.url}
             alt={userName}
-            className="h-36 w-36 rounded-full border-2 border-neutral-500 transition-transform duration-300 ease-in-out hover:scale-105"
+            className="h-36 w-36 rounded-full border-2 border-neutral-500"
           />
-        </div>
+        </motion.div>
+
         <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2 text-center md:text-left">
             <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
@@ -33,7 +46,13 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
               @{userName}
             </h3>
             <p className="text-sm dark:text-neutral-500">{bio}</p>
-            <div className="mt-3 flex justify-center gap-4 md:justify-start">
+
+            <motion.div
+              className="mt-3 flex justify-center gap-4 md:justify-start"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
               {isOwnProfile ? (
                 <>
                   <Link
@@ -54,18 +73,23 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
                       className="rounded bg-blue-500 px-4 py-2 text-white"
                     />
                   )}
-
                   <button className="rounded bg-blue-500 px-5 py-1 text-sm font-medium text-white">
                     Share Profile
                   </button>
                 </>
               )}
-            </div>
+            </motion.div>
           </div>
-          <div className="flex justify-center gap-8">
+
+          <motion.div
+            className="flex justify-center gap-8"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+          >
             <div className="text-center">
               <h2 className="mb-1 text-2xl font-bold text-neutral-950 dark:text-neutral-100">
-                {blog.length}
+                <CountUp end={blog.length} duration={1} />
               </h2>
               <p className="text-sm text-neutral-800 dark:text-neutral-200">
                 Blogs
@@ -73,7 +97,7 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
             </div>
             <div className="text-center">
               <h2 className="mb-1 text-2xl font-bold text-neutral-950 dark:text-neutral-100">
-                {followers.length || 0}
+                <CountUp end={followers.length || 0} duration={1.2} />
               </h2>
               <p className="text-sm text-neutral-800 dark:text-neutral-200">
                 Followers
@@ -81,16 +105,16 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
             </div>
             <div className="text-center">
               <h2 className="mb-1 text-2xl font-bold text-neutral-950 dark:text-neutral-100">
-                {following.length || 0}
+                <CountUp end={following.length || 0} duration={1.2} />
               </h2>
               <p className="text-sm text-neutral-800 dark:text-neutral-200">
                 Following
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

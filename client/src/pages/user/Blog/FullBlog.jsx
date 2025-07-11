@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { useFetchAllCommentsByBlogQuery } from "../../../redux/api/commentApi";
 import FollowButton from "../../../components/follow/FollowButton";
 import SaveButton from "../../../components/SaveButton";
+import { motion } from "framer-motion";
 
 const FullBlog = () => {
   const { id } = useParams();
@@ -20,6 +21,7 @@ const FullBlog = () => {
   const { data: blog, isLoading, isError } = useGetBlogByIdQuery(id);
   const [registerView] = useRegisterViewMutation();
   const [toggleLike] = useToggleLikeMutation();
+
   useEffect(() => {
     if (id) registerView(id);
   }, [id, registerView]);
@@ -28,18 +30,20 @@ const FullBlog = () => {
     try {
       await toggleLike(id);
     } catch (err) {
-      toast.error("Failed to like/unlike the blog", err);
+      toast.error("Failed to like/unlike the blog");
     }
   };
+
   const { data: comments = [] } = useFetchAllCommentsByBlogQuery(id);
 
-  //
   if (isLoading) {
     return <div className="p-6 text-white">Loading....</div>;
   }
+
   if (isError || !blog) {
     return <div className="p-6 text-red-400">Failed to load blog.</div>;
   }
+
   const {
     title,
     content,
@@ -52,16 +56,28 @@ const FullBlog = () => {
   } = blog;
 
   return (
-    <div className="mx-auto mt-10 max-w-7xl px-4 py-6">
-      <button
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="mx-auto mt-10 max-w-7xl px-4 py-6"
+    >
+      <motion.button
+        whileHover={{ x: -4 }}
         onClick={() => navigate(-1)}
         className="mb-4 cursor-pointer text-sm text-blue-400 hover:underline"
       >
         ← Go Back
-      </button>
-      <h1 className="mb-4 text-4xl leading-tight font-bold text-neutral-800 md:text-5xl dark:text-neutral-100">
+      </motion.button>
+
+      <motion.h1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="mb-4 text-4xl leading-tight font-bold text-neutral-800 md:text-5xl dark:text-neutral-100"
+      >
         {title}
-      </h1>
+      </motion.h1>
 
       <div className="mb-6 flex flex-wrap items-center gap-4 text-sm dark:text-neutral-100">
         <Link
@@ -78,19 +94,21 @@ const FullBlog = () => {
           </span>
         </Link>
         <p>{new Date(createdAt).toLocaleDateString()}</p>
-        {author?._id === userInfo?.user?.id && (
+
+        {author?._id === userInfo?.user?.id ? (
           <Link
             to={`/edit-post/${blog._id}`}
             className="text-blue-400 hover:underline"
           >
             Edit
           </Link>
-        )}
-        {userInfo && author._id !== userInfo?.user?.id && (
-          <FollowButton
-            id={author._id}
-            className="rounded bg-blue-500 px-2 py-1 text-white"
-          />
+        ) : (
+          userInfo && (
+            <FollowButton
+              id={author._id}
+              className="rounded bg-blue-500 px-2 py-1 text-white"
+            />
+          )
         )}
       </div>
 
@@ -105,41 +123,46 @@ const FullBlog = () => {
               key={i}
               className="rounded bg-gray-700 px-3 py-1 text-sm text-gray-200 dark:bg-neutral-100 dark:text-neutral-800"
             >
-              # {tag.toString()}
+              #{tag.toString()}
             </span>
           ))}
         </div>
       )}
+
       {blogImage?.url && (
-        <img
+        <motion.img
           src={blogImage.url}
           alt={title}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
           className="mb-6 max-h-[500px] w-full rounded-md object-cover"
         />
       )}
+
       <div className="mb-6 flex justify-between text-sm text-neutral-900 dark:text-neutral-100">
         <div className="flex gap-6">
-          <button
+          <motion.button
             onClick={handleLike}
+            whileTap={{ scale: 1.2 }}
             className="cursor-pointer text-sm text-red-500"
           >
-            {likes.length}
-
+            {likes.length}{" "}
             {likes.map(String).includes(userInfo?.user?.id) ? "❤️" : "🤍"}
-          </button>
+          </motion.button>
           <span>💬 {comments.length} comments</span>
           <span>👁️ {views} views</span>
         </div>
-        <div>
-          <SaveButton blogId={id} />
-        </div>
+        <SaveButton blogId={id} />
       </div>
+
       <div
         className="prose prose-invert max-w-none text-lg leading-relaxed text-neutral-900 dark:text-neutral-200"
         dangerouslySetInnerHTML={{ __html: content }}
       />
+
       <CommentSection blogId={id} />
-    </div>
+    </motion.div>
   );
 };
 

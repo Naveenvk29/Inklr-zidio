@@ -3,6 +3,7 @@ import Blogs from "./Blogs";
 import { useGetUserByIdQuery } from "../../../redux/api/userApi";
 import { useGetBlogsByUserQuery } from "../../../redux/api/blogApi";
 import { useParams } from "react-router-dom";
+import { motion } from "motion/react";
 const UserProfile = () => {
   const { id } = useParams();
 
@@ -46,10 +47,15 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="w-full">
+    <motion.div
+      className="mt-10 w-full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
       <ProfileCard profile={profile} blog={userBlogs} isOwnProfile={false} />
       <Blogs blogs={userBlogs} isOwnProfile={false} />
-    </div>
+    </motion.div>
   );
 };
 

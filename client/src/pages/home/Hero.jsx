@@ -24,9 +24,12 @@ const Hero = () => {
             <p className="mb-4 text-neutral-600">
               Join Inklr and start writing today.
             </p>
-            <button className="rounded bg-indigo-600 px-6 py-2 text-white hover:bg-indigo-700">
+            <Link
+              to={"/signup"}
+              className="rounded bg-indigo-600 px-6 py-2 text-white hover:bg-indigo-700"
+            >
               Get Started
-            </button>
+            </Link>
             <Link
               to="/explore"
               className="mt-4 ml-4 inline-block text-indigo-600 hover:underline dark:text-indigo-400"
