@@ -35,7 +35,7 @@ const MyProfile = () => {
 
   return (
     <motion.div
-      className="mt-10 w-full"
+      className="w-full px-6 py-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}

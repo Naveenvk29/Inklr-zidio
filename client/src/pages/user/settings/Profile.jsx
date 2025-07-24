@@ -68,7 +68,7 @@ const Profile = ({ profile, updateUser, refetch }) => {
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
-              className="w-full rounded-md border border-neutral-500 px-4 py-2 focus:border-neutral-200 focus:ring focus:outline-none"
+              className="w-full rounded-md border border-neutral-500 px-4 py-2 focus:border-neutral-200 focus:ring focus:outline-none dark:text-neutral-300"
               placeholder="Enter your username"
             />
           </div>
@@ -81,7 +81,7 @@ const Profile = ({ profile, updateUser, refetch }) => {
               rows={4}
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              className="w-full resize-none rounded-md border border-neutral-500 px-4 py-2 focus:border-neutral-200 focus:ring focus:outline-none"
+              className="w-full resize-none rounded-md border border-neutral-500 px-4 py-2 text-neutral-800 focus:border-neutral-200 focus:ring focus:outline-none dark:text-neutral-300"
               placeholder="Tell us about yourself"
             />
           </div>
@@ -99,7 +99,7 @@ const Profile = ({ profile, updateUser, refetch }) => {
               <img
                 src={preview}
                 alt="avatar preview"
-                className="h-32 w-32 rounded-full border object-cover"
+                className="h-32 w-32 rounded-full border-4 border-blue-600 object-cover transition-transform duration-200 hover:scale-105"
               />
             ) : (
               <div className="flex h-32 w-32 items-center justify-center rounded-full border bg-gray-100 text-gray-400">

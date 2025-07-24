@@ -11,6 +11,7 @@ const UserProfile = () => {
     data: profile,
     isLoading: loadingProfile,
     error: errorProfile,
+    refetch: refetchProfile,
   } = useGetUserByIdQuery(id, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -48,12 +49,17 @@ const UserProfile = () => {
 
   return (
     <motion.div
-      className="mt-10 w-full"
+      className="w-full px-6 py-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <ProfileCard profile={profile} blog={userBlogs} isOwnProfile={false} />
+      <ProfileCard
+        profile={profile}
+        blog={userBlogs}
+        isOwnProfile={false}
+        refetchProfile={refetchProfile}
+      />
       <Blogs blogs={userBlogs} isOwnProfile={false} />
     </motion.div>
   );

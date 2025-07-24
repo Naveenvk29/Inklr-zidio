@@ -4,7 +4,12 @@ import { useSelector } from "react-redux";
 import { motion } from "motion/react";
 import CountUp from "react-countup";
 
-const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
+const ProfileCard = ({
+  profile,
+  blog = [],
+  isOwnProfile = true,
+  refetchProfile,
+}) => {
   const {
     _id,
     fullName,
@@ -71,6 +76,7 @@ const ProfileCard = ({ profile, blog = [], isOwnProfile = true }) => {
                     <FollowButton
                       id={_id}
                       className="rounded bg-blue-500 px-4 py-2 text-white"
+                      onFollowChange={refetchProfile}
                     />
                   )}
                   <button className="rounded bg-blue-500 px-5 py-1 text-sm font-medium text-white">

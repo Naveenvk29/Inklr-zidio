@@ -77,7 +77,7 @@ const Footer = () => {
         </div>
       </motion.div>
       <motion.h1
-        className="inset-x-0 mt-5 bg-gradient-to-b from-neutral-50 to-neutral-200 bg-clip-text text-center text-xl font-bold text-transparent uppercase md:text-9xl lg:text-[18rem] xl:text-[20rem] dark:from-neutral-950 dark:to-neutral-800"
+        className="inset-x-0 mt-5 bg-gradient-to-b from-neutral-50 to-neutral-200 bg-clip-text text-center text-xl font-bold text-transparent uppercase md:text-[8rem] lg:text-[18rem] dark:from-neutral-950 dark:to-neutral-800"
         initial={{
           opacity: 0,
           y: 50,

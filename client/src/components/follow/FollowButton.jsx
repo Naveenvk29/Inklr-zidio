@@ -4,7 +4,7 @@ import {
   useGetFollowingsQuery,
 } from "../../redux/api/userApi";
 
-const FollowButton = ({ id: targetUserId, className = "" }) => {
+const FollowButton = ({ id: targetUserId, className = "", onFollowChange }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const currentUserId = userInfo?.user?.id;
   const {
@@ -21,6 +21,9 @@ const FollowButton = ({ id: targetUserId, className = "" }) => {
     try {
       await toggleFollow(targetUserId).unwrap();
       refetchFollowings();
+      if (typeof onFollowChange === "function") {
+        onFollowChange();
+      }
     } catch (err) {
       console.error("Error toggling follow:", err);
     }

@@ -10,6 +10,7 @@ import Image from "@tiptap/extension-image";
 import Resize from "tiptap-extension-resize-image";
 import Link from "@tiptap/extension-link";
 import Heading from "@tiptap/extension-heading";
+import { useDropzone } from "react-dropzone";
 
 import {
   Bold,
@@ -25,6 +26,7 @@ import {
   ImageIcon,
   LinkIcon,
 } from "lucide-react";
+import { useEffect } from "react";
 
 const fontOptions = [
   "Arial",
@@ -81,6 +83,12 @@ const RichTextEditor = ({ value, onChange }) => {
     content: value || "<p>Start writing…</p>",
     onUpdate: ({ editor }) => onChange?.(editor.getHTML()),
   });
+
+  useEffect(() => {
+    if (editor && value && editor.getText() !== value) {
+      editor.commands.setContent(value, false);
+    }
+  }, [editor, value]);
 
   if (!editor) return null;
 

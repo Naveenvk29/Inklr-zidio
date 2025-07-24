@@ -5,7 +5,7 @@ const Hero = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   return (
-    <div className="h-[40vh] bg-gradient-to-r px-6 py-12 text-center">
+    <div className="my-20 px-6 py-12 text-center">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-4 text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl dark:text-neutral-100">
           🌑 Inklr –{" "}

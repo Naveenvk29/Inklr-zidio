@@ -5,7 +5,14 @@ import View from "../Models/viewModel.js";
 const createABlog = async (req, res) => {
   try {
     const { title, content, category, visibility, description } = req.body;
-    const tags = req.body.tags?.split(",").map((t) => t.trim()) || [];
+    let tags = [];
+    if (req.body.tags) {
+      try {
+        tags = JSON.parse(req.body.tags);
+      } catch (error) {
+        tags = req.body.tags.split(",").map((t) => t.trim());
+      }
+    }
     const author = req.user.id;
     let blogImage = {};
 

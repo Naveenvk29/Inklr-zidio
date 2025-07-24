@@ -17,7 +17,6 @@ const LatestBlog = () => {
       </div>
     );
 
-  // Sort by newest first
   const sortedBlogs = [...blogs].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
@@ -25,13 +24,13 @@ const LatestBlog = () => {
   const latestFive = sortedBlogs.slice(0, 5);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="mx-auto my-10 max-w-7xl px-4 py-8">
       <h2 className="mb-8 text-2xl font-bold text-neutral-800 dark:text-white">
         Latest Blogs
       </h2>
 
       {latestFive.length === 0 ? (
-        <p>No blogs available.</p>
+        <p className="text-neutral-500">No blogs available.</p>
       ) : (
         <motion.div
           layout

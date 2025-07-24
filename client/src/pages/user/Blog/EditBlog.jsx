@@ -27,6 +27,8 @@ const EditBlog = () => {
 
   const { data: blogData, isLoading: isFetchingBlogs } =
     useGetBlogByIdQuery(id);
+  console.log(blogData);
+
   const { data: categories } = useFetchCategoriesQuery();
   const [editBlog, { isLoading: isUpdating }] = useEditBlogMutation();
   const [deleteBlog, { isLoading: isDeleting }] = useDeleteBlogMutation();

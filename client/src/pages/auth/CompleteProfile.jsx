@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useCompleteProfileMutation } from "../../redux/api/userApi";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateUserInfo } from "../../redux/features/authSlice";
 
 const CompleteProfile = () => {
   const [avatar, setAvatar] = useState(null);
@@ -8,6 +10,8 @@ const CompleteProfile = () => {
   const [userName, setUserName] = useState("");
   const [bio, setBio] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const dispatch = useDispatch();
 
   const [completeProfile, { isLoading }] = useCompleteProfileMutation();
 
@@ -33,7 +37,9 @@ const CompleteProfile = () => {
     formData.append("bio", bio);
 
     try {
-      await completeProfile(formData).unwrap();
+      const res = await completeProfile(formData).unwrap();
+      dispatch(updateUserInfo(res.user));
+      console.log("Complete profile response:", res);
       navigate("/");
     } catch (error) {
       if (

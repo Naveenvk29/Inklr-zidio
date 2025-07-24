@@ -85,7 +85,7 @@ const FullBlog = () => {
           className="flex cursor-pointer items-center gap-2 hover:underline"
         >
           <img
-            src={author?.profilePicture?.url}
+            src={author?.avatar?.url}
             alt={author?.userName || "Author"}
             className="h-10 w-10 rounded-full object-cover"
           />
@@ -157,7 +157,7 @@ const FullBlog = () => {
       </div>
 
       <div
-        className="prose prose-invert max-w-none text-lg leading-relaxed text-neutral-900 dark:text-neutral-200"
+        className="prose prose-invert max-w-none px-8 py-4 text-lg leading-relaxed text-neutral-900 dark:text-neutral-200"
         dangerouslySetInnerHTML={{ __html: content }}
       />
 

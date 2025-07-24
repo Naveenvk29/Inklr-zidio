@@ -127,13 +127,13 @@ const NavBar = () => {
       >
         <Link
           to="/"
-          className="text-2xl font-bold tracking-tight text-neutral-800 dark:text-neutral-300"
+          className="inline-flex items-center text-2xl font-bold tracking-tight text-neutral-800 dark:text-neutral-300"
         >
           🌑 <span>Inklr</span>
         </Link>
 
         {userInfo && (
-          <div className="relative w-full max-w-md">
+          <div className="relative w-full max-w-sm">
             <div className="relative">
               <input
                 type="text"
@@ -224,7 +224,7 @@ const NavBar = () => {
           <div className="flex items-center" ref={dropdownRef}>
             {userInfo ? (
               <AnimatePresence>
-                <div className="relative">
+                <div className="relative w-full">
                   <img
                     src={avatar?.url || "/default-avatar.png"}
                     alt={userName || "User"}
@@ -357,6 +357,13 @@ const NavBar = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+
+                <Link
+                  to={"/explore"}
+                  className="text-sm text-neutral-700 hover:underline dark:text-neutral-200"
+                >
+                  Blogs
+                </Link>
 
                 {searchTerm && filterUser?.length > 0 && (
                   <ul className="space-y-2 rounded-md bg-white p-2 shadow dark:bg-neutral-800">
