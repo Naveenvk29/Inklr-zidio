@@ -161,18 +161,13 @@ const togglelike = async (req, res) => {
       blog.likes.pull(userId);
     } else {
       blog.likes.push(userId);
-
-      // ✅ Send notification if someone else liked the blog
       if (!blog.author._id.equals(req.user._id)) {
-        // Save in DB
         await Notification.create({
           sender: req.user._id,
           receiver: blog.author._id,
           type: "like",
           blog: blog._id,
         });
-
-        // Emit real-time notification
         sendNotification(blog.author._id.toString(), {
           sender: req.user._id,
           type: "like",
