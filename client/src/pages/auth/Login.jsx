@@ -171,7 +171,7 @@ const Login = () => {
             Google
           </button>
           <button
-            onClick={githubProvider}
+            onClick={githubHandle}
             className="w-full rounded-2xl bg-neutral-900 px-4 py-2 text-white"
           >
             GitHub

@@ -4,6 +4,7 @@ import { apiSlice } from "./api/apiSlice";
 
 import authReducer from "./features/authSlice";
 import themeReducer from "./features/themeSlice";
+import notificationReducer from "./features/notificationSlice";
 
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
@@ -21,6 +22,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   theme: themeReducer,
+  notification: notificationReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 

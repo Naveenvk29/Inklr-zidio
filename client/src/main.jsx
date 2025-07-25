@@ -39,6 +39,7 @@ import Dashboard from "./pages/admin/Dashboard/Dashboard.jsx";
 import ForgotPassword from "./pages/auth/Forgetpassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 
+import NotificationsPage from "./pages/auth/NotificationsPage.jsx";
 const router = createBrowserRouter(
   createRoutesFromChildren(
     <Route path="" element={<App />}>
@@ -59,6 +60,7 @@ const router = createBrowserRouter(
         <Route path="/settings" element={<Settings />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/saved" element={<SavedBlogs />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
 
       <Route path="/admin" element={<AdminPrivateRoute />}>

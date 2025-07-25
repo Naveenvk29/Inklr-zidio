@@ -4,6 +4,8 @@ import { uploadUserAvatar, deleteUserAvatar } from "../utils/Cloudinary.js";
 import crypto from "crypto";
 import { sendEmail } from "../libs/sendEmail.js";
 import admin from "../libs/firebaseAdmin.js";
+import Notification from "../Models/Notification.js";
+import { sendNotification } from "../utils/socket.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -302,8 +304,19 @@ const toggleFollowUser = asyncHandler(async (req, res) => {
   } else {
     currentUser.following.push(userToToggle._id);
     userToToggle.followers.push(currentUser._id);
-  }
 
+    // Save to DB
+    await Notification.create({
+      sender: currentUser._id,
+      receiver: userToToggle._id,
+      type: "follow",
+    });
+
+    sendNotification(userToToggle._id.toString(), {
+      sender: currentUser._id,
+      type: "follow",
+    });
+  }
   await currentUser.save();
   await userToToggle.save();
 
@@ -520,6 +533,17 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
+const getNotifications = async (req, res) => {
+  try {
+    const notifications = await Notification.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch notifications" });
+  }
+};
+
 export {
   registerUser,
   loginUser,
@@ -540,4 +564,5 @@ export {
   forgetPassword,
   resetPassword,
   oAuthLogin,
+  getNotifications,
 };

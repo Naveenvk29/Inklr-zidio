@@ -1,6 +1,8 @@
 import Comment from "../Models/commentModel.js";
 import mongoose from "mongoose";
-
+import Notification from "../Models/Notification.js";
+import { sendNotification } from "../utils/socket.js";
+import Blog from "../Models/blogModel.js";
 const addComment = async (req, res) => {
   try {
     const { comment, blogId, parentComment } = req.body;
@@ -20,11 +22,29 @@ const addComment = async (req, res) => {
       });
     }
 
+    const blog = await Blog.findById(blogId).populate("author", "_id");
+
+    if (blog && !blog.author._id.equals(req.user._id)) {
+      await Notification.create({
+        sender: req.user._id,
+        receiver: blog.author._id,
+        type: "comment",
+        blog: blogId,
+      });
+      sendNotification(blog.author._id.toString(), {
+        sender: req.user._id,
+        type: "comment",
+        blog: blogId,
+      });
+    }
+
     res.status(201).json(newComment);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to add comment", details: error.message });
+    console.error("Error adding comment:", error);
+    res.status(500).json({
+      error: "Failed to add comment",
+      details: error.message,
+    });
   }
 };
 

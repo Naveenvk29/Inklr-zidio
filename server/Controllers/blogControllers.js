@@ -1,6 +1,8 @@
 import Blog from "../Models/blogModel.js";
 import { uploadBlogImage, deleteBlogImage } from "../utils/Cloudinary.js";
 import View from "../Models/viewModel.js";
+import Notification from "../Models/Notification.js";
+import { sendNotification } from "../utils/socket.js";
 
 const createABlog = async (req, res) => {
   try {
@@ -146,10 +148,9 @@ const removeblog = async (req, res) => {
 
 const togglelike = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id).populate(
-      "likes",
-      "userName email avatar"
-    );
+    const blog = await Blog.findById(req.params.id)
+      .populate("likes", "userName email avatar")
+      .populate("author", "_id");
 
     if (!blog) return res.status(404).json({ error: "Blog not found" });
 
@@ -160,10 +161,28 @@ const togglelike = async (req, res) => {
       blog.likes.pull(userId);
     } else {
       blog.likes.push(userId);
+
+      // ✅ Send notification if someone else liked the blog
+      if (!blog.author._id.equals(req.user._id)) {
+        // Save in DB
+        await Notification.create({
+          sender: req.user._id,
+          receiver: blog.author._id,
+          type: "like",
+          blog: blog._id,
+        });
+
+        // Emit real-time notification
+        sendNotification(blog.author._id.toString(), {
+          sender: req.user._id,
+          type: "like",
+          blog: blog._id,
+        });
+      }
     }
 
     await blog.save();
-    await blog.populate("likes", "username email avatar");
+    await blog.populate("likes", "userName email avatar");
 
     res.status(200).json({
       message: liked ? "Unliked" : "Liked",
@@ -174,7 +193,6 @@ const togglelike = async (req, res) => {
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
-
 const fetchBlogLikes = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id).populate(

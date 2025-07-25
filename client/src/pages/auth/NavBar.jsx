@@ -14,7 +14,7 @@ import {
   useScroll,
 } from "motion/react";
 import cn from "../../libs/utils";
-
+import { markAllAsRead } from "../../redux/features/notificationSlice";
 const NavItem = [
   { name: "Admin Dashboard", link: "/admin/dashboard" },
   { name: "My Profile", link: "/my-profile" },
@@ -96,7 +96,9 @@ const NavBar = () => {
 
     return userNameMatch || firstNameMatch || lastNameMatch;
   });
-
+  const { notifications } = useSelector((state) => state.notification);
+  const [showNotificationDropdown, setShowNotificationDropdown] =
+    useState(false);
   return (
     <motion.div
       ref={ref}
@@ -194,11 +196,66 @@ const NavBar = () => {
                   Write
                 </span>
               </Link>
-              <Bell
-                className="cursor-pointer text-neutral-600 dark:text-neutral-300"
-                size={18}
-                aria-label="Notifications"
-              />
+              <div className="relative">
+                <Bell
+                  onClick={() => setShowNotificationDropdown((prev) => !prev)}
+                  className="cursor-pointer text-neutral-600 dark:text-neutral-300"
+                  size={18}
+                  aria-label="Notifications"
+                />
+                {notifications.some((n) => !n.isRead) && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-xs text-white">
+                    {notifications.filter((n) => !n.isRead).length > 9
+                      ? "9+"
+                      : notifications.filter((n) => !n.isRead).length}
+                  </span>
+                )}
+
+                {/* 🔽 Dropdown */}
+                {showNotificationDropdown && (
+                  <div className="absolute right-0 z-50 mt-2 max-h-96 w-80 overflow-y-auto rounded-md bg-white p-3 shadow-lg dark:bg-neutral-800">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
+                        Notifications
+                      </span>
+                      <button
+                        onClick={() => dispatch(markAllAsRead())}
+                        className="text-xs text-blue-500 hover:underline"
+                      >
+                        Mark all read
+                      </button>
+                    </div>
+
+                    {notifications.length === 0 ? (
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        No notifications
+                      </p>
+                    ) : (
+                      notifications.slice(0, 5).map((notif, index) => (
+                        <div
+                          key={index}
+                          className={`mb-2 rounded-md px-2 py-1 text-sm ${
+                            notif.isRead
+                              ? "text-neutral-600 dark:text-neutral-300"
+                              : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                          }`}
+                        >
+                          {notif.message}
+                        </div>
+                      ))
+                    )}
+
+                    <hr className="my-2" />
+                    <Link
+                      to="/notifications"
+                      onClick={() => setShowNotificationDropdown(false)}
+                      className="block text-center text-sm text-blue-600 hover:underline dark:text-blue-400"
+                    >
+                      View all
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -426,7 +483,7 @@ const NavBar = () => {
                   Login
                 </Link>
                 <Link
-                  to="/register"
+                  to={"/signup"}
                   onClick={() => setMobileOpen(false)}
                   className="text-sm text-neutral-700 dark:text-neutral-200"
                 >

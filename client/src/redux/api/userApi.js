@@ -144,6 +144,14 @@ const userApi = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    getNotifications: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/notifications`,
+        method: "GET",
+      }),
+      providesTags: ["Notifications"],
+      refetchOnMountOrArgChange: true,
+    }),
   }),
 });
 
@@ -167,4 +175,5 @@ export const {
   useForgetPasswordMutation,
   useResetPasswordMutation,
   useOauthLoginUserMutation,
+  useGetNotificationsQuery,
 } = userApi;

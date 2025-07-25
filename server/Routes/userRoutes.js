@@ -19,6 +19,7 @@ import {
   forgetPassword,
   resetPassword,
   oAuthLogin,
+  getNotifications,
 } from "../Controllers/userControllers.js";
 import { authenticate } from "../Middleware/authMiddleware.js";
 import { upload } from "../Middleware/multerMiddleware.js";
@@ -67,5 +68,8 @@ router.get("/blogs/:id/save-count", authenticate, fetchBlogSaveCount);
 //
 router.post("/forget-password", forgetPassword);
 router.post("/reset-password", resetPassword);
+
+// Notifications
+router.get("/notifications", authenticate, getNotifications);
 
 export default router;
